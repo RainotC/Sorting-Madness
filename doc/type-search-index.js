@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"pl.put.poznan.sorting.doc","l":"DocumentationTemplate"},{"p":"pl.put.poznan.sorting.logic","l":"SortingMadness"},{"p":"pl.put.poznan.sorting.app","l":"SortingMadnessApplication"},{"p":"pl.put.poznan.sorting.rest","l":"SortingMadnessController"}];updateSearchResults();
