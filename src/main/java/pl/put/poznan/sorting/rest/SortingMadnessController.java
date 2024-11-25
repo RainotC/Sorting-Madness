@@ -1,46 +1,69 @@
 package pl.put.poznan.sorting.rest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import pl.put.poznan.sorting.logic.SortingMadness;
-
-import java.util.Arrays;
-
+import java.util.*;
 
 @RestController
-@RequestMapping("/{text}")
+@RequestMapping("/")  // Handle requests to the root
 public class SortingMadnessController {
 
     private static final Logger logger = LoggerFactory.getLogger(SortingMadnessController.class);
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public String get(@PathVariable String text,
-                              @RequestParam(value="transforms", defaultValue="upper,escape") String[] transforms) {
+    // Handle GET request to receive data in the request body
+    @GetMapping(produces = "application/json")  // This is a GET request
+    public String get(@RequestBody Map<String, Object> jsonMap) {  // Extract JSON from body
+        try {
+            // Deserialize 'to-sort' field explicitly as a List<Integer>
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Integer> toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<>() {});
+            String algorithm = (String) jsonMap.get("algorithm");
+            int iterations = (int) jsonMap.get("iterations");
+            String order = (String) jsonMap.get("order");
 
-        // log the parameters
-        logger.debug(text);
-        logger.debug(Arrays.toString(transforms));
+            // Log received parameters
+            logger.debug("to-sort: {}", toSort);
+            logger.debug("algorithm: {}", algorithm);
+            logger.debug("iterations: {}", iterations);
+            logger.debug("order: {}", order);
 
-        // perform the transformation, you should run your logic here, below is just a silly example
-        SortingMadness transformer = new SortingMadness(transforms);
-        return transformer.transform(text);
+            // Start timing the sort operation
+            long start = System.nanoTime();
+            if ("bubble sort".equalsIgnoreCase(algorithm)) {
+                bubbleSort(toSort, "ASC".equalsIgnoreCase(order));
+            } else {
+                toSort.sort("ASC".equalsIgnoreCase(order) ? Integer::compareTo : Comparator.reverseOrder());
+            }
+            long end = System.nanoTime();
+            long elapsed = end - start;
+
+            // Create response
+            Map<String, Object> result = Map.of(
+                    "sorted", toSort,
+                    "timeElapsed", elapsed + " nanoseconds"
+            );
+
+            // Return response as JSON
+            return objectMapper.writeValueAsString(result);
+        } catch (Exception e) {
+            logger.error("Error processing input", e);
+            return "{\"error\": \"Invalid input\"}";
+        }
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
-    public String post(@PathVariable String text,
-                      @RequestBody String[] transforms) {
-
-        // log the parameters
-        logger.debug(text);
-        logger.debug(Arrays.toString(transforms));
-
-        // perform the transformation, you should run your logic here, below is just a silly example
-        SortingMadness transformer = new SortingMadness(transforms);
-        return transformer.transform(text);
+    private void bubbleSort(List<Integer> list, boolean ascending) {
+        int n = list.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if ((ascending && list.get(j) > list.get(j + 1)) ||
+                        (!ascending && list.get(j) < list.get(j + 1))) {
+                    // Swap elements
+                    Collections.swap(list, j, j + 1);
+                }
+            }
+        }
     }
-
-
-
 }
-
-
