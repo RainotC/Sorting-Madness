@@ -2,6 +2,7 @@ package pl.put.poznan.sorting.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import pl.put.poznan.sorting.logic.BubbleSort;
 import pl.put.poznan.sorting.logic.SortingMadness;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ public class SortingMadnessController {
         logger.debug(Arrays.toString(transforms));
 
         // perform the transformation, you should run your logic here, below is just a silly example
+
         SortingMadness transformer = new SortingMadness(transforms);
         return transformer.transform(text);
     }
