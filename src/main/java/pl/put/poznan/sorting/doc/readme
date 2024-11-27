@@ -1,0 +1,8 @@
+This is documentation template to be used later for created classes.
+
+To create documentation use:
+Click on main directory -> Tools -> Generate JavaDoc ->
+JavaDoc Scope -> Directory '...\src\main' ->
+Output Directory: Sorting-Madness\doc ->
+Uncheck all boxes between visibility level and Locale: ->
+Generate
