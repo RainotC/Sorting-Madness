@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import pl.put.poznan.sorting.logic.BubbleSort;
+import pl.put.poznan.sorting.logic.SortingMadness;
+import java.util.Arrays;
 import java.util.*;
 
 @RestController
