@@ -24,7 +24,7 @@ public class SortingMadnessController {
             // Deserialize 'to-sort' field explicitly as a List<Integer>
             ObjectMapper objectMapper = new ObjectMapper();
             int[] toSort = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
-            String[] algorithms = objectMapper.convertValue(jsonMap.get("algorithm"), String[].class);
+            String[] algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
             int iterations = (int) jsonMap.get("iterations");
             String order = (String) jsonMap.get("order");
 
@@ -39,8 +39,8 @@ public class SortingMadnessController {
 
             // Create response
             Map<String, Object> result = Map.of(
-                    "sorted", results.getFirst().getSortedArray(),
-                    "timeElapsed [ns]", results.getFirst().getTime()
+                    "sorted", results.getLast().getSortedArray(),
+                    "timeElapsed [ns]", results.getLast().getTime()
             );
 
             // Return response as JSON
