@@ -1,8 +1,9 @@
 package pl.put.poznan.sorting.logic;
 
 public class BubbleSort implements algorithm {
-    public void sort(int arr[], int n){
+    public void sort(int[] arr){
         int i, j, temp;
+        int n = arr.length;
         boolean swapped;
         for (i = 0; i < n - 1; i++) {
             swapped = false;
@@ -19,7 +20,7 @@ public class BubbleSort implements algorithm {
 
             // If no two elements were
             // swapped by inner loop, then break
-            if (swapped == false)
+            if (!swapped)
                 break;
         }
     }

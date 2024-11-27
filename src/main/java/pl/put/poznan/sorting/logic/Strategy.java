@@ -2,5 +2,5 @@ package pl.put.poznan.sorting.logic;
 
 
 interface algorithm {
-    void sort(int[] arr, int n);
+    void sort(int[] arr);
 }
