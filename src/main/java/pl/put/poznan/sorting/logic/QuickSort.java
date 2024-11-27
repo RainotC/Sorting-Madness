@@ -5,6 +5,5 @@ public class QuickSort implements algorithm {
         int n = array.length;
         int pivot = array[0];
         System.out.println(pivot);
-        int
     }
 }
