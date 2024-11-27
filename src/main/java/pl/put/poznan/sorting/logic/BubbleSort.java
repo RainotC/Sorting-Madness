@@ -1,22 +1,22 @@
 package pl.put.poznan.sorting.logic;
 
 public class BubbleSort implements SortingAlgorithm {
-    public void sort(int[] arr){
-        int i, j, temp;
+    public void sort(int[] arr, int iterations){
+        if (iterations == 0) iterations = -1;
         int n = arr.length;
         boolean swapped;
-        for (i = 0; i < n - 1; i++) {
+        for (int i = 0; i < n - 1; i++) {
             swapped = false;
-            for (j = 0; j < n - i - 1; j++) {
+            for (int j = 0; j < n - i - 1; j++) {
                 if (arr[j] > arr[j + 1]) {
-
                     // Swap arr[j] and arr[j+1]
-                    temp = arr[j];
+                    int tmp = arr[j];
                     arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
+                    arr[j + 1] = tmp;
                     swapped = true;
                 }
             }
+            if (--iterations == 0) break;
 
             // If no two elements were
             // swapped by inner loop, then break

@@ -35,7 +35,7 @@ public class SortingMadnessController {
             logger.debug("order: {}", order);
 
             SortingMadness sortingMadness = new SortingMadness(algorithms);
-            List<Result> results = sortingMadness.sort(toSort);
+            List<Result> results = sortingMadness.sort(toSort, iterations, order);
 
             // Create response
             Map<String, Object> result = Map.of(
