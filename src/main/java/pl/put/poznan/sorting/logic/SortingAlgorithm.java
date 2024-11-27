@@ -1,6 +1,5 @@
 package pl.put.poznan.sorting.logic;
 
-
-interface algorithm {
+public interface SortingAlgorithm {
     void sort(int[] arr);
 }

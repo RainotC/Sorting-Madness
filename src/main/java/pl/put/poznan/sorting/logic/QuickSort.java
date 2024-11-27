@@ -1,6 +1,6 @@
 package pl.put.poznan.sorting.logic;
 
-public class QuickSort implements algorithm {
+public class QuickSort implements SortingAlgorithm {
     public void sort(int[] array) {
         int n = array.length;
         int pivot = array[0];

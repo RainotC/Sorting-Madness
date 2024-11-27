@@ -1,6 +1,6 @@
 package pl.put.poznan.sorting.logic;
 
-public class BubbleSort implements algorithm {
+public class BubbleSort implements SortingAlgorithm {
     public void sort(int[] arr){
         int i, j, temp;
         int n = arr.length;
