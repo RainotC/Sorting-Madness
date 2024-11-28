@@ -19,8 +19,8 @@ public class SortingMadnessApplication {
     public static void testBubbleSort() {
         
         BubbleSort sorter = new BubbleSort();
-        int[] array = {1, 6, 4, 7, 2, 8, 205};
-        sorter.sort(array);
+        int[] array = {1, 6, 4, 7, 2, 8, 205, 100, 25};
+        sorter.sort(array,0,0);
         System.out.println(Arrays.toString(array));
 
     }
@@ -28,8 +28,8 @@ public class SortingMadnessApplication {
     public static void testQuickSort() {
 
         QuickSort sorter = new QuickSort();
-        int[] array = {1, 6, 4, 7, 2, 8, 205};
-        sorter.sort(array);
+        int[] array = {1, 6, 4, 7, 2, 8, 205,  100, 25,2};
+        sorter.sort(array, 0, array.length-1);
         System.out.println(Arrays.toString(array));
     }
 }
