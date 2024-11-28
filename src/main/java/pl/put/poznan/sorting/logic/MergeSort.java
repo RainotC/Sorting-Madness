@@ -3,16 +3,17 @@ package pl.put.poznan.sorting.logic;
 public class MergeSort implements SortingAlgorithm{
     @Override
     public void sort(int[] arr, int iterations) {
-        mergeSort(arr, 0, arr.length - 1);
+        iterations = (iterations == 0) ? -1 : iterations+1;
+        mergeSort(arr, 0, arr.length - 1, iterations);
     }
 
-    private void mergeSort(int[] arr, int left, int right) {
-        if (left < right) {
+    private void mergeSort(int[] arr, int left, int right, int iterations) {
+        if (left < right && iterations-- !=0) {
 
             int middle = (left + right) / 2;
 
-            mergeSort(arr, left, middle);
-            mergeSort(arr, middle + 1, right);
+            mergeSort(arr, left, middle, iterations);
+            mergeSort(arr, middle + 1, right, iterations);
 
             merge(arr, left, middle, right);
         }
