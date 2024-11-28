@@ -2,7 +2,8 @@ package pl.put.poznan.sorting.logic;
 
 
 public class MergeSort implements algorithm{
-    public void sort(int[] arr, int left, int right){
+    public long sort(int[] arr, int left, int right){
+        long start = System.currentTimeMillis();
         {
             if (left < right) {
 
@@ -14,6 +15,8 @@ public class MergeSort implements algorithm{
                 merge(arr, left, middle, right);
             }
         }
+        long end = System.currentTimeMillis();
+        return end-start;
     }
 
     static void merge(int arr[], int left, int middle, int right)

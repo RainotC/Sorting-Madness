@@ -2,13 +2,16 @@ package pl.put.poznan.sorting.logic;
 
 public class QuickSort implements algorithm {
 
-    public void sort(int[] arr, int QSLow, int QSHigh) {
+    public long sort(int[] arr, int QSLow, int QSHigh) {
+        long start = System.currentTimeMillis();
         if (QSLow < QSHigh) {
             int pivot = partition(arr, QSLow, QSHigh);
 
             sort(arr, QSLow, pivot - 1);
             sort(arr, pivot + 1, QSHigh);
         }
+        long end = System.currentTimeMillis();
+        return end-start;
     }
     private int partition(int[] arr, int low, int high) {
         int pivot = arr[high];
@@ -24,10 +27,5 @@ public class QuickSort implements algorithm {
         return i + 1;
     }
 
-//    static void swap(int[] arr, int i, int j) {
-//        int temp = arr[i];
-//        arr[i] = arr[j];
-//        arr[j] = temp;
-//    }
 
 }

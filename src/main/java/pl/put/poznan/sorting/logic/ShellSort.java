@@ -2,7 +2,8 @@ package pl.put.poznan.sorting.logic;
 
 
 public class ShellSort implements algorithm{
-    public void sort(int[] arr, int parameter1, int parameter2) {
+    public long sort(int[] arr, int parameter1, int parameter2) {
+        long start = System.currentTimeMillis();
         int len = arr.length;
 
         for (int gap = len/2; gap > 0; gap /= 2)
@@ -17,5 +18,7 @@ public class ShellSort implements algorithm{
             }
         }
 
+        long end = System.currentTimeMillis();
+        return end-start;
     }
 }

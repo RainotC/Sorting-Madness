@@ -1,12 +1,13 @@
 package pl.put.poznan.sorting.logic;
 
-import java.util.Arrays;
-
 public class BogoSort implements algorithm {
-    public void sort(int[] arr, int parameter1, int parameter2) {
+    public long sort(int[] arr, int parameter1, int parameter2) {
+        long start = System.currentTimeMillis();
         while (!isSorted(arr)){
             shuffle(arr);
         }
+        long end = System.currentTimeMillis();
+        return end-start;
     }
 
     public void shuffle(int[] arr) {
