@@ -30,6 +30,7 @@ public class SortingMadness {
             switch (algorithm.toLowerCase()) {
                 case "bubble sort" -> sorter = new BubbleSort();
                 case "quick sort" -> sorter = new QuickSort();
+                case "merge sort" -> sorter = new MergeSort();
                 default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
             }
 
