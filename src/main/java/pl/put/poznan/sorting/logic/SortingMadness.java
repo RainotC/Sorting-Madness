@@ -31,6 +31,7 @@ public class SortingMadness {
                 case "bubble sort" -> sorter = new BubbleSort();
                 case "quick sort" -> sorter = new QuickSort();
                 case "merge sort" -> sorter = new MergeSort();
+                case "bogo sort" -> sorter = new BogoSort();
                 default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
             }
 
