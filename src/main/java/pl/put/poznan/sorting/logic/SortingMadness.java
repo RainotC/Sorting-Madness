@@ -26,14 +26,7 @@ public class SortingMadness {
         List<Result> results = new ArrayList<>();
 
         for (String algorithm : usedAlgorithms) {
-            SortingAlgorithm sorter;
-            switch (algorithm.toLowerCase()) {
-                case "bubble sort" -> sorter = new BubbleSort();
-                case "quick sort" -> sorter = new QuickSort();
-                case "merge sort" -> sorter = new MergeSort();
-                case "bogo sort" -> sorter = new BogoSort();
-                default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
-            }
+            SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
             int[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
             long startTime = System.nanoTime(); // Start timing
@@ -45,5 +38,18 @@ public class SortingMadness {
         }
 
         return results;
+    }
+
+    private static SortingAlgorithm getSortingAlgorithm(String algorithm) {
+        SortingAlgorithm sorter;
+        switch (algorithm.toLowerCase()) {
+            case "bubble sort" -> sorter = new BubbleSort();
+            case "quick sort" -> sorter = new QuickSort();
+            case "merge sort" -> sorter = new MergeSort();
+            case "bogo sort" -> sorter = new BogoSort();
+            case "selection sort" -> sorter = new SelectionSort();
+            default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
+        }
+        return sorter;
     }
 }
