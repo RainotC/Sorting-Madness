@@ -48,6 +48,7 @@ public class SortingMadness {
             case "merge sort" -> sorter = new MergeSort();
             case "bogo sort" -> sorter = new BogoSort();
             case "selection sort" -> sorter = new SelectionSort();
+            case "shell sort" -> sorter = new ShellSort();
             default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
         }
         return sorter;
