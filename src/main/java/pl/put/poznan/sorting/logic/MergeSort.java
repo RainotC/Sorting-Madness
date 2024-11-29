@@ -1,64 +1,44 @@
 package pl.put.poznan.sorting.logic;
 
-
-public class MergeSort implements algorithm{
-    public long sort(int[] arr, int left, int right){
-        long start = System.currentTimeMillis();
-        {
-            if (left < right) {
-
-                int middle = left + (right - left) / 2;
-
-                sort(arr, left, middle);
-                sort(arr, middle + 1, right);
-
-                merge(arr, left, middle, right);
-            }
-        }
-        long end = System.currentTimeMillis();
-        return end-start;
+public class MergeSort implements SortingAlgorithm{
+    @Override
+    public void sort(int[] arr, int iterations) {
+        iterations = (iterations == 0) ? -1 : iterations+1;
+        mergeSort(arr, 0, arr.length - 1, iterations);
     }
 
-    static void merge(int arr[], int left, int middle, int right)
-    {
-        int size1 = middle - left + 1;
-        int size2 = right - middle;
+    private void mergeSort(int[] arr, int left, int right, int iterations) {
+        if (left < right && iterations-- !=0) {
 
+            int middle = (left + right) / 2;
 
-        int L[] = new int[size1];
-        int R[] = new int[size2];
+            mergeSort(arr, left, middle, iterations);
+            mergeSort(arr, middle + 1, right, iterations);
 
-        for (int i = 0; i < size1; ++i)
-            L[i] = arr[left + i];
-        for (int j = 0; j < size2; ++j)
-            R[j] = arr[middle + 1 + j];
-
-        int indexL = 0, indexR = 0;
-
-        int indexMerged = left;
-        while (indexL < size1 && indexR < size2) {
-            if (L[indexL] <= R[indexR]) {
-                arr[indexMerged] = L[indexL];
-                indexL++;
-            }
-            else {
-                arr[indexMerged] = R[indexR];
-                indexR++;
-            }
-            indexMerged++;
-        }
-
-        while (indexL < size1) {
-            arr[indexMerged] = L[indexL];
-            indexL++;
-            indexMerged++;
-        }
-
-        while (indexR < size2) {
-            arr[indexMerged] = R[indexR];
-            indexR++;
-            indexMerged++;
+            merge(arr, left, middle, right);
         }
     }
 
+    private void merge(int[] arr, int left, int middle, int right) {
+        int n1 = middle - left + 1;
+        int n2 = right - middle;
+
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+
+        System.arraycopy(arr, left, L, 0, n1);
+        System.arraycopy(arr, middle + 1, R, 0, n2);
+
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j]) {
+                arr[k++] = L[i++];
+            } else {
+                arr[k++] = R[j++];
+            }
+        }
+
+        while (i < n1) arr[k++] = L[i++];
+        while (j < n2) arr[k++] = R[j++];
+    }
 }

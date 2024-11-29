@@ -1,27 +1,23 @@
 package pl.put.poznan.sorting.logic;
 
-
-public class BubbleSort implements algorithm {
-    public long sort(int[] arr, int QSLow, int QSHigh) {
-        long start = System.currentTimeMillis();
-        int i, j, temp;
-        int len = arr.length;
+public class BubbleSort implements SortingAlgorithm {
+    @Override
+    public void sort(int[] arr, int iterations){
+        if (iterations == 0) iterations = -1;
+        int n = arr.length;
         boolean swapped;
-        for (i = 0; i < len - 1; i++) {
+        for (int i = 0; i < n - 1; i++) {
             swapped = false;
-            for (j = 0; j < len - i - 1; j++) {
+            for (int j = 0; j < n - i - 1; j++) {
                 if (arr[j] > arr[j + 1]) {
-                    temp = arr[j];
+                    int tmp = arr[j];
                     arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
+                    arr[j + 1] = tmp;
                     swapped = true;
                 }
             }
-            if (!swapped)
-                break;
+            if (--iterations == 0 || !swapped) break;
         }
-        long end = System.currentTimeMillis();
-        return end-start;
     }
 
 }

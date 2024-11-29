@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import pl.put.poznan.sorting.logic.BubbleSort;
+import pl.put.poznan.sorting.logic.Result;
 import pl.put.poznan.sorting.logic.SortingMadness;
 import java.util.Arrays;
 import java.util.*;
@@ -22,31 +23,24 @@ public class SortingMadnessController {
         try {
             // Deserialize 'to-sort' field explicitly as a List<Integer>
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Integer> toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<>() {});
-            String algorithm = (String) jsonMap.get("algorithm");
+            int[] toSort = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
+            String[] algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
             int iterations = (int) jsonMap.get("iterations");
             String order = (String) jsonMap.get("order");
 
             // Log received parameters
             logger.debug("to-sort: {}", toSort);
-            logger.debug("algorithm: {}", algorithm);
+            logger.debug("algorithms: {}", (Object) algorithms);
             logger.debug("iterations: {}", iterations);
             logger.debug("order: {}", order);
 
-            // Start timing the sort operation
-            long start = System.nanoTime();
-            if ("bubble sort".equalsIgnoreCase(algorithm)) {
-                bubbleSort(toSort, "ASC".equalsIgnoreCase(order));
-            } else {
-                toSort.sort("ASC".equalsIgnoreCase(order) ? Integer::compareTo : Comparator.reverseOrder());
-            }
-            long end = System.nanoTime();
-            long elapsed = end - start;
+            SortingMadness sortingMadness = new SortingMadness(algorithms);
+            List<Result> results = sortingMadness.sort(toSort, iterations, order);
 
             // Create response
             Map<String, Object> result = Map.of(
-                    "sorted", toSort,
-                    "timeElapsed", elapsed + " nanoseconds"
+                    "sorted", results.getLast().getSortedArray(),
+                    "timeElapsed [ns]", results.getLast().getTime()
             );
 
             // Return response as JSON
@@ -54,19 +48,6 @@ public class SortingMadnessController {
         } catch (Exception e) {
             logger.error("Error processing input", e);
             return "{\"error\": \"Invalid input\"}";
-        }
-    }
-
-    private void bubbleSort(List<Integer> list, boolean ascending) {
-        int n = list.size();
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if ((ascending && list.get(j) > list.get(j + 1)) ||
-                        (!ascending && list.get(j) < list.get(j + 1))) {
-                    // Swap elements
-                    Collections.swap(list, j, j + 1);
-                }
-            }
         }
     }
 }

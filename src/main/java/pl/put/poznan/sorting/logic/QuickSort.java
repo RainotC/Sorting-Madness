@@ -1,31 +1,36 @@
 package pl.put.poznan.sorting.logic;
 
-public class QuickSort implements algorithm {
+public class QuickSort implements SortingAlgorithm {
 
-    public long sort(int[] arr, int QSLow, int QSHigh) {
-        long start = System.currentTimeMillis();
-        if (QSLow < QSHigh) {
-            int pivot = partition(arr, QSLow, QSHigh);
-
-            sort(arr, QSLow, pivot - 1);
-            sort(arr, pivot + 1, QSHigh);
-        }
-        long end = System.currentTimeMillis();
-        return end-start;
+    @Override
+    public void sort(int[] arr, int iterations) {
+        if (iterations == 0) iterations = -1;
+        quickSort(arr, 0, arr.length - 1, iterations);
     }
+
+    private void quickSort(int[] arr, int low, int high, int iterations) {
+        if (low < high && iterations-- != 0) {
+            int pivot = partition(arr, low, high);
+            quickSort(arr, low, pivot - 1, iterations);
+            quickSort(arr, pivot + 1, high, iterations);
+        }
+    }
+
     private int partition(int[] arr, int low, int high) {
         int pivot = arr[high];
 
         int i = low - 1;
-        for (int j = low; j <= high - 1; j++) {
+        for (int j = low; j < high; j++) {
             if (arr[j] < pivot) {
                 i++;
-                algorithm.swap(arr, i, j);
+                int tmp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = tmp;
             }
         }
-        algorithm.swap(arr, i + 1, high);
+        int tmp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = tmp;
         return i + 1;
     }
-
-
 }

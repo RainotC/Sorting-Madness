@@ -1,24 +1,22 @@
 package pl.put.poznan.sorting.logic;
 
+public class ShellSort implements SortingAlgorithm {
 
-public class ShellSort implements algorithm{
-    public long sort(int[] arr, int parameter1, int parameter2) {
-        long start = System.currentTimeMillis();
+    @Override
+    public void sort(int[] arr, int iterations) {
+        if (iterations == 0) iterations = -1;
         int len = arr.length;
 
-        for (int gap = len/2; gap > 0; gap /= 2)
-        {
-            for (int i = gap; i < len; i += 1)
-            {
-                int temp = arr[i];
+        for (int gap = len/2; gap > 0; gap /= 2) {
+            for (int i = gap; i < len; i++) {
+                int tmp = arr[i];
                 int j;
-                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)
+                for (j = i; j >= gap && arr[j - gap] > tmp; j -= gap) {
                     arr[j] = arr[j - gap];
-                arr[j] = temp;
+                }
+                arr[j] = tmp;
             }
+            if (--iterations == 0) break;
         }
-
-        long end = System.currentTimeMillis();
-        return end-start;
     }
 }
