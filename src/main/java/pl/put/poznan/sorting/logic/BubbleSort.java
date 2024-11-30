@@ -1,6 +1,23 @@
 package pl.put.poznan.sorting.logic;
 
+/**
+ * The {@code BubbleSort} class implements the {@link SortingAlgorithm} interface
+ * and provides an implementation of the Bubble Sort algorithm.
+ * Bubble Sort repeatedly steps through the array, compares adjacent elements,
+ * and swaps them if they are in the wrong order.
+ */
 public class BubbleSort implements SortingAlgorithm {
+
+    /**
+     * Sorts the given array using the Bubble Sort algorithm. The algorithm makes multiple
+     * passes through the array, swapping adjacent elements that are in the wrong order.
+     * The process stops when the specified number of iterations is reached or
+     * no swaps are needed in a pass.
+     *
+     * @param arr        the array to be sorted
+     * @param iterations the maximum number of iterations to perform; if set to 0 or negative,
+     *                   the algorithm will run until the array is fully sorted
+     */
     @Override
     public void sort(int[] arr, int iterations){
         if (iterations == 0) iterations = -1;
