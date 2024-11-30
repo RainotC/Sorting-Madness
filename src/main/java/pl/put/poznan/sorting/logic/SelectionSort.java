@@ -1,7 +1,21 @@
 package pl.put.poznan.sorting.logic;
 
+/**
+ * {@code SelectionSort} class implements the {@link SortingAlgorithm} interface
+ * and provides an implementation of the Selection Sort algorithm.
+ * Selection Sort works by repeatedly finding the smallest element in the unsorted portion
+ * of the array and moving it to the beginning.
+ */
 public class SelectionSort implements SortingAlgorithm {
 
+    /**
+     * Sorts the given array using the Selection Sort algorithm.
+     * The sorting process can be limited by the specified number of iterations.
+     *
+     * @param arr        the array to be sorted
+     * @param iterations the maximum number of iterations to perform;
+     *                   if set to 0 or negative, the algorithm sorts the entire array
+     */
     @Override
     public void sort(int[] arr, int iterations) {
         if (iterations == 0) iterations = -1;

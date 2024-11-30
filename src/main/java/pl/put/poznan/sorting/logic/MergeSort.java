@@ -1,12 +1,35 @@
 package pl.put.poznan.sorting.logic;
 
+/**
+ * {@code MergeSort} class implements the {@link SortingAlgorithm} interface
+ * and provides an implementation of the Merge Sort algorithm.
+ * Merge Sort is a divide-and-conquer algorithm that recursively splits an array into smaller subarrays,
+ * sorts them, and then merges them back together.
+ */
 public class MergeSort implements SortingAlgorithm{
+
+    /**
+     * Sorts the given array using the Merge Sort algorithm.
+     * The sorting process can be limited by the specified number of iterations.
+     *
+     * @param arr        the array to be sorted
+     * @param iterations the maximum number of recursive calls; if set to 0 or negative,
+     *                   the algorithm will sort the entire array
+     */
     @Override
     public void sort(int[] arr, int iterations) {
         iterations = (iterations == 0) ? -1 : iterations+1;
         mergeSort(arr, 0, arr.length - 1, iterations);
     }
 
+    /**
+     * Recursively splits the array into smaller subarrays and sorts them.
+     *
+     * @param arr        the array to be sorted
+     * @param left       the starting index of the subarray
+     * @param right      the ending index of the subarray
+     * @param iterations the remaining number of recursive calls allowed
+     */
     private void mergeSort(int[] arr, int left, int right, int iterations) {
         if (left < right && iterations-- !=0) {
 
@@ -19,6 +42,14 @@ public class MergeSort implements SortingAlgorithm{
         }
     }
 
+    /**
+     * Merges two sorted subarrays into a single sorted subarray.
+     *
+     * @param arr    the original array containing the subarrays
+     * @param left   the starting index of the first subarray
+     * @param middle the ending index of the first subarray
+     * @param right  the ending index of the second subarray
+     */
     private void merge(int[] arr, int left, int middle, int right) {
         int n1 = middle - left + 1;
         int n2 = right - middle;
