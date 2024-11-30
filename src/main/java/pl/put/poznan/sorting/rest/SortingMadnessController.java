@@ -1,14 +1,11 @@
 package pl.put.poznan.sorting.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import pl.put.poznan.sorting.logic.BubbleSort;
 import pl.put.poznan.sorting.logic.Result;
 import pl.put.poznan.sorting.logic.SortingMadness;
-import java.util.Arrays;
 import java.util.*;
 
 /**
@@ -65,14 +62,19 @@ public class SortingMadnessController {
             SortingMadness sortingMadness = new SortingMadness(algorithms);
             List<Result> results = sortingMadness.sort(toSort, iterations, order);
 
-            // Create response
-            Map<String, Object> result = Map.of(
-                    "sorted", results.getLast().getSortedArray(),
-                    "timeElapsed [ns]", results.getLast().getTime()
-            );
+            // Create response in the specified format
+            Map<String, Object> response = new HashMap<>();
+            Map<String, Object> resultMap = new HashMap<>();
+            for (Result result : results) {
+                Map<String, Object> algorithmResult = new HashMap<>();
+                algorithmResult.put("timeElapsed [ns]", result.getTime());
+                algorithmResult.put("sorted", result.getSortedArray());
+                resultMap.put(result.getAlgorithm(), algorithmResult);
+            }
+            response.put("results", resultMap);
 
             // Return response as JSON
-            return objectMapper.writeValueAsString(result);
+            return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
             logger.error("Error processing input", e);
             return "{\"error\": \"Invalid input\"}";
