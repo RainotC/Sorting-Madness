@@ -45,14 +45,29 @@ public class SortingMadnessController {
      */
     @GetMapping(produces = "application/json")  // This is a GET request
     public String get(@RequestBody Map<String, Object> jsonMap) {  // Extract JSON from body
+        // Deserialize 'to-sort' field explicitly as a List<Integer>
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            // Deserialize 'to-sort' field explicitly as a List<Integer>
-            ObjectMapper objectMapper = new ObjectMapper();
-            int[] toSort = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
-            String[] algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
-            int iterations = (int) jsonMap.get("iterations");
-            String order = (String) jsonMap.get("order");
-
+            if (!jsonMap.containsKey("to-sort") || !jsonMap.containsKey("algorithms") ||
+                    !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order")) {
+                throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order'");
+            }
+            int[] toSort;
+            String[] algorithms;
+            int iterations;
+            String order;
+            try {
+                toSort = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
+                algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
+                iterations = (int) jsonMap.get("iterations");
+                order = (String) jsonMap.get("order");
+                //catching errors
+                if (toSort.length<1)throw new IllegalArgumentException("List of numbers to sort cannot be empty");
+                if (algorithms.length<1)throw new IllegalArgumentException("List of algorithms cannot be empty");
+            }catch(IllegalArgumentException | ClassCastException e){
+                logger.error("Invalid data types in input", e); // i don't know if it's necessary if throws show on log anyway
+                return "{\"error\": \"Invalid data types in input: "+e.getMessage()+"\"}"; //showing to client
+            }
             // Log received parameters
             logger.debug("to-sort: {}", toSort);
             logger.debug("algorithms: {}", (Object) algorithms);
@@ -76,8 +91,8 @@ public class SortingMadnessController {
             // Return response as JSON
             return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
-            logger.error("Error processing input", e);
-            return "{\"error\": \"Invalid input\"}";
+            logger.error("Error processing input", e); // i don't know if it's necessary if throws show on log anyway
+            return "{\"error\": \""+ e.getMessage()+"\"}";
         }
     }
 }
