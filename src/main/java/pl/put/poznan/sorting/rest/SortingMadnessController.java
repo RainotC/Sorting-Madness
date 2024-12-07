@@ -45,6 +45,7 @@ public class SortingMadnessController {
      */
     @GetMapping(produces = "application/json")  // This is a GET request
     public String get(@RequestBody Map<String, Object> jsonMap) {  // Extract JSON from body
+        logger.info("Connenction request recieved");
         // Deserialize 'to-sort' field explicitly as a List<Integer>
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -74,20 +75,25 @@ public class SortingMadnessController {
             logger.debug("iterations: {}", iterations);
             logger.debug("order: {}", order);
 
+            logger.info("Started sorting");
             SortingMadness sortingMadness = new SortingMadness(algorithms);
             List<Result> results = sortingMadness.sort(toSort, iterations, order);
+            logger.info("Finished sorting");
 
             // Create response in the specified format
             Map<String, Object> response = new HashMap<>();
             Map<String, Object> resultMap = new HashMap<>();
             for (Result result : results) {
+                logger.debug("algorithm: {}", result.getAlgorithm());
+                logger.debug("timeElapsed [ns]: {}", result.getTime());
+                logger.debug("sorted: {}", result.getSortedArray());
                 Map<String, Object> algorithmResult = new HashMap<>();
                 algorithmResult.put("timeElapsed [ns]", result.getTime());
                 algorithmResult.put("sorted", result.getSortedArray());
                 resultMap.put(result.getAlgorithm(), algorithmResult);
             }
             response.put("results", resultMap);
-
+            logger.info("Results sent");
             // Return response as JSON
             return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
