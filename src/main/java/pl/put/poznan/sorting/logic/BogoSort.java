@@ -19,11 +19,11 @@ public class BogoSort implements SortingAlgorithm {
      * the array randomly until it is sorted or until the specified number of iterations is reached.
      *
      * @param arr        the array to be sorted
-     * @param iterations the maximum number of iterations to attempt; if set to 0 or negative, the algorithm runs indefinitely
+     * @param iterations the maximum number of iterations to attempt; if set to 0 or negative, the algorithm runs 100000000 times
      */
     @Override
     public void sort(int[] arr, int iterations) {
-        if (iterations == 0) iterations = -1;
+        if (iterations <= 0) iterations = 100000000;
         while (!isSorted(arr)) {
             shuffle(arr);
             if (--iterations == 0) break;
