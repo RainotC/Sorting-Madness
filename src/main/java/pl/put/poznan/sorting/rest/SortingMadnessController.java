@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.put.poznan.sorting.logic.Result;
 import pl.put.poznan.sorting.logic.SortingMadness;
 import java.util.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * The {@code SortingMadnessController} class is a REST controller that handles requests
@@ -53,17 +54,19 @@ public class SortingMadnessController {
                     !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order")) {
                 throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order'");
             }
-            int[] toSort;
+            List<Map<String, Object>> toSort;
+            String field;
             String[] algorithms;
             int iterations;
             String order;
             try {
-                toSort = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
+                field = (String) jsonMap.get("field");
+                toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<List<Map<String, Object>>>() {});
                 algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
                 iterations = (int) jsonMap.get("iterations");
                 order = (String) jsonMap.get("order");
                 //catching errors
-                if (toSort.length<1)throw new IllegalArgumentException("List of numbers to sort cannot be empty");
+//                if (toSort.length<1)throw new IllegalArgumentException("List of numbers to sort cannot be empty");
                 if (algorithms.length<1)throw new IllegalArgumentException("List of algorithms cannot be empty");
             }catch(IllegalArgumentException | ClassCastException e){
                 logger.error("Invalid data types in input", e); // i don't know if it's necessary if throws show on log anyway
@@ -77,7 +80,27 @@ public class SortingMadnessController {
 
             logger.info("Started sorting");
             SortingMadness sortingMadness = new SortingMadness(algorithms);
-            List<Result> results = sortingMadness.sort(toSort, iterations, order);
+            List<Integer> fieldValuesList = new ArrayList<>();
+            for (Map<String, Object> item : toSort) {
+                if (!item.containsKey(field)) {
+                    throw new IllegalArgumentException("Field '" + field + "' not found in one or more objects.");
+                }
+            }
+            for (Map<String, Object> item : toSort) {
+                Object fieldValueObject = item.get(field);
+
+                // Ensure the field value is treated as an Integer
+                if (!(fieldValueObject instanceof Integer)) {
+                    throw new IllegalArgumentException("Field '" + field + "' must contain integers. Found: " + fieldValueObject);
+                }
+
+                // Cast the field value to Integer and add to the list
+                Integer fieldValue = (Integer) fieldValueObject;
+                fieldValuesList.add(fieldValue);
+            }
+            int[] fieldValues = fieldValuesList.stream().mapToInt(Integer::intValue).toArray();
+            List<Result> results = sortingMadness.sort(fieldValues, iterations, order);
+            logger.info("Collected field values: {}", Arrays.toString(fieldValues));
             logger.info("Finished sorting");
 
             // Create response in the specified format
