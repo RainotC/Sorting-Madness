@@ -8,6 +8,7 @@ import pl.put.poznan.sorting.logic.Result;
 import pl.put.poznan.sorting.logic.SortingMadness;
 import java.util.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.List;
 
 /**
  * The {@code SortingMadnessController} class is a REST controller that handles requests
@@ -47,18 +48,20 @@ public class SortingMadnessController {
     @GetMapping(produces = "application/json")  // This is a GET request
     public String get(@RequestBody Map<String, Object> jsonMap) {  // Extract JSON from body
         logger.info("Connenction request recieved");
-        // Deserialize 'to-sort' field explicitly as a List<Integer>
+
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             if (!jsonMap.containsKey("to-sort") || !jsonMap.containsKey("algorithms") ||
                     !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order")) {
                 throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order'");
             }
+
             List<Map<String, Object>> toSort;
             String field;
             String[] algorithms;
             int iterations;
             String order;
+
             try {
                 field = (String) jsonMap.get("field");
                 toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<List<Map<String, Object>>>() {});
@@ -68,7 +71,7 @@ public class SortingMadnessController {
                 //catching errors
 //                if (toSort.length<1)throw new IllegalArgumentException("List of numbers to sort cannot be empty");
                 if (algorithms.length<1)throw new IllegalArgumentException("List of algorithms cannot be empty");
-            }catch(IllegalArgumentException | ClassCastException e){
+            } catch(IllegalArgumentException | ClassCastException e){
                 logger.error("Invalid data types in input", e); // i don't know if it's necessary if throws show on log anyway
                 return "{\"error\": \"Invalid data types in input: "+e.getMessage()+"\"}"; //showing to client
             }
@@ -80,6 +83,8 @@ public class SortingMadnessController {
 
             logger.info("Started sorting");
             SortingMadness sortingMadness = new SortingMadness(algorithms);
+
+            //begin field
             List<Integer> fieldValuesList = new ArrayList<>();
             for (Map<String, Object> item : toSort) {
                 if (!item.containsKey(field)) {
@@ -88,31 +93,40 @@ public class SortingMadnessController {
             }
             for (Map<String, Object> item : toSort) {
                 Object fieldValueObject = item.get(field);
-
-                // Ensure the field value is treated as an Integer
                 if (!(fieldValueObject instanceof Integer)) {
                     throw new IllegalArgumentException("Field '" + field + "' must contain integers. Found: " + fieldValueObject);
                 }
-
-                // Cast the field value to Integer and add to the list
                 Integer fieldValue = (Integer) fieldValueObject;
                 fieldValuesList.add(fieldValue);
             }
             int[] fieldValues = fieldValuesList.stream().mapToInt(Integer::intValue).toArray();
             List<Result> results = sortingMadness.sort(fieldValues, iterations, order);
+
             logger.info("Collected field values: {}", Arrays.toString(fieldValues));
             logger.info("Finished sorting");
 
+            // end for object field
             // Create response in the specified format
+            List<Map<String, Object>> sortedToSort = new ArrayList<>();
             Map<String, Object> response = new HashMap<>();
             Map<String, Object> resultMap = new HashMap<>();
             for (Result result : results) {
+                sortedToSort.clear();
+                for (int j = 0; j < result.getSortedArray().length; j++) {
+                    for (Map<String, Object> item : toSort) {
+                        if (item.containsKey(field) && item.get(field).equals(result.getSortedArray()[j]) && !sortedToSort.contains(item)) {
+                            sortedToSort.add(item);
+                            break;
+                        }
+                    }
+                }
                 logger.debug("algorithm: {}", result.getAlgorithm());
                 logger.debug("timeElapsed [ns]: {}", result.getTime());
-                logger.debug("sorted: {}", result.getSortedArray());
+                logger.debug("sorted: {}", sortedToSort);
+                logger.debug("result: {}", result.getSortedArray());
                 Map<String, Object> algorithmResult = new HashMap<>();
                 algorithmResult.put("timeElapsed [ns]", result.getTime());
-                algorithmResult.put("sorted", result.getSortedArray());
+                algorithmResult.put("sorted", sortedToSort);
                 resultMap.put(result.getAlgorithm(), algorithmResult);
             }
             response.put("results", resultMap);
