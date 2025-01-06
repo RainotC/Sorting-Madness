@@ -56,54 +56,70 @@ public class SortingMadnessController {
                 throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order'");
             }
 
-            List<Map<String, Object>> toSort;
+            // init for all data in a bigger JSON
             String field;
+            field = null;
+            List<Map<String, Object>> toSort = Collections.emptyList();
+            int[] toSortInt = new int[0];
+            List<Result> results = Collections.emptyList();;
             String[] algorithms;
             int iterations;
             String order;
 
             try {
-                field = (String) jsonMap.get("field");
-                toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<List<Map<String, Object>>>() {});
+                //get all basic data
                 algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
                 iterations = (int) jsonMap.get("iterations");
                 order = (String) jsonMap.get("order");
-                //catching errors
-//                if (toSort.length<1)throw new IllegalArgumentException("List of numbers to sort cannot be empty");
                 if (algorithms.length<1)throw new IllegalArgumentException("List of algorithms cannot be empty");
+                //check for field
+                try {
+                    field = (String) jsonMap.get("field");
+                } catch (Exception e) {
+                    logger.debug("No 'field' -- sorting a simple list");
+                }
+                // make toSort(Int) lists filled
+                if (field!=null) {
+                    logger.debug("'field' involved -- sorting JSON objects");
+                    toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<List<Map<String, Object>>>() {});
+                } else {
+                    toSortInt = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
+                }
             } catch(IllegalArgumentException | ClassCastException e){
                 logger.error("Invalid data types in input", e); // i don't know if it's necessary if throws show on log anyway
                 return "{\"error\": \"Invalid data types in input: "+e.getMessage()+"\"}"; //showing to client
             }
             // Log received parameters
-            logger.debug("to-sort: {}", toSort);
             logger.debug("algorithms: {}", (Object) algorithms);
             logger.debug("iterations: {}", iterations);
             logger.debug("order: {}", order);
-
             logger.info("Started sorting");
-            SortingMadness sortingMadness = new SortingMadness(algorithms);
-
-            //begin field
-            List<Integer> fieldValuesList = new ArrayList<>();
-            for (Map<String, Object> item : toSort) {
-                if (!item.containsKey(field)) {
-                    throw new IllegalArgumentException("Field '" + field + "' not found in one or more objects.");
+            if (field != null) {
+                SortingMadness sortingMadness = new SortingMadness(algorithms);
+                //begin field
+                List<Integer> fieldValuesList = new ArrayList<>();
+                for (Map<String, Object> item : toSort) {
+                    if (!item.containsKey(field)) {
+                        throw new IllegalArgumentException("Field '" + field + "' not found in one or more objects.");
+                    }
                 }
-            }
-            for (Map<String, Object> item : toSort) {
-                Object fieldValueObject = item.get(field);
-                if (!(fieldValueObject instanceof Integer)) {
-                    throw new IllegalArgumentException("Field '" + field + "' must contain integers. Found: " + fieldValueObject);
+                for (Map<String, Object> item : toSort) {
+                    Object fieldValueObject = item.get(field);
+                    if (!(fieldValueObject instanceof Integer)) {
+                        throw new IllegalArgumentException("Field '" + field + "' must contain integers. Found: " + fieldValueObject);
+                    }
+                    Integer fieldValue = (Integer) fieldValueObject;
+                    fieldValuesList.add(fieldValue);
                 }
-                Integer fieldValue = (Integer) fieldValueObject;
-                fieldValuesList.add(fieldValue);
-            }
-            int[] fieldValues = fieldValuesList.stream().mapToInt(Integer::intValue).toArray();
-            List<Result> results = sortingMadness.sort(fieldValues, iterations, order);
+                int[] fieldValues = fieldValuesList.stream().mapToInt(Integer::intValue).toArray();
+                results = sortingMadness.sort(fieldValues, iterations, order);
 
-            logger.info("Collected field values: {}", Arrays.toString(fieldValues));
-            logger.info("Finished sorting");
+                logger.info("Collected field values: {}", Arrays.toString(fieldValues));
+                logger.info("Finished sorting");
+            } else {
+                SortingMadness sortingMadness = new SortingMadness(algorithms);
+                results = sortingMadness.sort(toSortInt, iterations, order);
+            }
 
             // end for object field
             // Create response in the specified format
@@ -111,23 +127,32 @@ public class SortingMadnessController {
             Map<String, Object> response = new HashMap<>();
             Map<String, Object> resultMap = new HashMap<>();
             for (Result result : results) {
-                sortedToSort.clear();
-                for (int j = 0; j < result.getSortedArray().length; j++) {
-                    for (Map<String, Object> item : toSort) {
-                        if (item.containsKey(field) && item.get(field).equals(result.getSortedArray()[j]) && !sortedToSort.contains(item)) {
-                            sortedToSort.add(item);
-                            break;
+                if (field != null) {
+                    sortedToSort.clear();
+                    for (int j = 0; j < result.getSortedArray().length; j++) {
+                        for (Map<String, Object> item : toSort) {
+                            if (item.containsKey(field) && item.get(field).equals(result.getSortedArray()[j]) && !sortedToSort.contains(item)) {
+                                sortedToSort.add(item);
+                                break;
+                            }
                         }
                     }
+                    logger.debug("algorithm: {}", result.getAlgorithm());
+                    logger.debug("timeElapsed [ns]: {}", result.getTime());
+                    logger.debug("sorted: {}", sortedToSort);
+                    Map<String, Object> algorithmResult = new HashMap<>();
+                    algorithmResult.put("timeElapsed [ns]", result.getTime());
+                    algorithmResult.put("sorted", sortedToSort);
+                    resultMap.put(result.getAlgorithm(), algorithmResult);
+                } else {
+                    logger.debug("algorithm: {}", result.getAlgorithm());
+                    logger.debug("timeElapsed [ns]: {}", result.getTime());
+                    logger.debug("result: {}", result.getSortedArray());
+                    Map<String, Object> algorithmResult = new HashMap<>();
+                    algorithmResult.put("timeElapsed [ns]", result.getTime());
+                    algorithmResult.put("sorted", result.getSortedArray());
+                    resultMap.put(result.getAlgorithm(), algorithmResult);
                 }
-                logger.debug("algorithm: {}", result.getAlgorithm());
-                logger.debug("timeElapsed [ns]: {}", result.getTime());
-                logger.debug("sorted: {}", sortedToSort);
-                logger.debug("result: {}", result.getSortedArray());
-                Map<String, Object> algorithmResult = new HashMap<>();
-                algorithmResult.put("timeElapsed [ns]", result.getTime());
-                algorithmResult.put("sorted", sortedToSort);
-                resultMap.put(result.getAlgorithm(), algorithmResult);
             }
             response.put("results", resultMap);
             logger.info("Results sent");
