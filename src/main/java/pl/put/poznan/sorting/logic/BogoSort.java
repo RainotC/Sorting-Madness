@@ -28,7 +28,7 @@ public class BogoSort implements SortingAlgorithm {
         while (!isSorted(arr)) {
             shuffle(arr);
             long timePassed = System.nanoTime()-startTime;
-            if (--iterations == 0 || timePassed>timeLimit) return timePassed;
+            if (--iterations == 0 || (timePassed>=timeLimit && timeLimit>0)) return timePassed;
         }
         return System.nanoTime() - startTime;
     }

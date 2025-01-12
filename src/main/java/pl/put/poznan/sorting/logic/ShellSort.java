@@ -32,7 +32,7 @@ public class ShellSort implements SortingAlgorithm {
                 arr[j] = tmp;
             }
             long timePassed = System.nanoTime()-startTime;
-            if (--iterations == 0|| timePassed>=timeLimit) return timePassed;
+            if (--iterations == 0|| (timePassed>=timeLimit && timeLimit>0)) return timePassed;
         }
         return System.nanoTime()-startTime;
     }

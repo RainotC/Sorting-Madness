@@ -34,7 +34,7 @@ public class QuickSort implements SortingAlgorithm {
      */
     private void quickSort(int[] arr, int low, int high, int iterations, long startTime, long timeLimit) {
         if (low < high && iterations-- != 0) {
-            if (System.nanoTime() - startTime > timeLimit) {
+            if (timeLimit>0 && System.nanoTime() - startTime >= timeLimit) {
                 return;
             }
             int pivot = partition(arr, low, high);

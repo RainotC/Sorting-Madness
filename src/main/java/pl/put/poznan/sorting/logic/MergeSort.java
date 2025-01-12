@@ -39,7 +39,7 @@ public class MergeSort implements SortingAlgorithm{
 
             mergeSort(arr, left, middle, iterations, timeLimit, startTime);
             mergeSort(arr, middle + 1, right, iterations, timeLimit, startTime);
-            if (System.nanoTime() - startTime > timeLimit) return;
+            if (System.nanoTime()-startTime>=timeLimit && timeLimit>0) return;
             merge(arr, left, middle, right);
         }
     }

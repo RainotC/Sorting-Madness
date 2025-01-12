@@ -35,10 +35,10 @@ public class BubbleSort implements SortingAlgorithm {
                 }
                 long timePassed = System.nanoTime() - startTime;
 
-                if (timePassed>=timeLimit) return timePassed;
+                if (timeLimit>0 && timePassed>=timeLimit) return timePassed;
             }
             long timePassed = System.nanoTime() - startTime;
-            if (--iterations == 0 || !swapped || timePassed>=timeLimit) return timePassed;
+            if (--iterations == 0 || !swapped || (timeLimit>0 && timePassed>=timeLimit)) return timePassed;
         }
         return System.nanoTime() - startTime;
     }

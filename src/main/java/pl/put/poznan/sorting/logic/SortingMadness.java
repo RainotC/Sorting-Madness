@@ -57,7 +57,7 @@ public class SortingMadness {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
             int[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
-            long timePassed = sorter.sort(arrayCopy,iterations, timeLimit);\
+            long timePassed = sorter.sort(arrayCopy,iterations, timeLimit);
             if (order.equalsIgnoreCase("desc")) reverseInPlace((arrayCopy));
 
 
