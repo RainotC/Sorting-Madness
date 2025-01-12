@@ -50,19 +50,18 @@ public class SortingMadness {
      *         and the names of the algorithms used
      * @throws IllegalArgumentException if an unknown algorithm name is provided
      */
-    public List<Result> sort(int[] toSort, int iterations, String order) {
+    public List<Result> sort(int[] toSort, int iterations, String order, long timeLimit) {
         List<Result> results = new ArrayList<>();
 
         for (String algorithm : usedAlgorithms) {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
             int[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
-            long startTime = System.nanoTime(); // Start timing
-            sorter.sort(arrayCopy,iterations);
+            long timePassed = sorter.sort(arrayCopy,iterations, timeLimit);\
             if (order.equalsIgnoreCase("desc")) reverseInPlace((arrayCopy));
-            long endTime = System.nanoTime(); // End timing
 
-            results.add(new Result(endTime - startTime, arrayCopy, algorithm)); // Add result
+
+            results.add(new Result(timePassed, arrayCopy, algorithm)); // Add result
         }
 
         return results;

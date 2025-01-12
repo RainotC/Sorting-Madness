@@ -22,12 +22,15 @@ public class BogoSort implements SortingAlgorithm {
      * @param iterations the maximum number of iterations to attempt; if set to 0 or negative, the algorithm runs 100 000 000 times
      */
     @Override
-    public void sort(int[] arr, int iterations) {
+    public long sort(int[] arr, int iterations, long timeLimit) {
+        long startTime = System.nanoTime();
         if (iterations <= 0) iterations = 100000000;
         while (!isSorted(arr)) {
             shuffle(arr);
-            if (--iterations == 0) break;
+            long timePassed = System.nanoTime()-startTime;
+            if (--iterations == 0 || timePassed>timeLimit) return timePassed;
         }
+        return System.nanoTime() - startTime;
     }
 
     /**

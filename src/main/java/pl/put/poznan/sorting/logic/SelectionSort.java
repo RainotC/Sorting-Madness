@@ -17,8 +17,9 @@ public class SelectionSort implements SortingAlgorithm {
      *                   if set to 0 or negative, the algorithm sorts the entire array
      */
     @Override
-    public void sort(int[] arr, int iterations) {
+    public long sort(int[] arr, int iterations, long timeLimit) {
         if (iterations == 0) iterations = -1;
+        long startTime = System.nanoTime();
         int len = arr.length;
         for (int i = 0; i < len - 1; i++) {
             int minIndex = i;
@@ -31,7 +32,9 @@ public class SelectionSort implements SortingAlgorithm {
             arr[minIndex] = arr[i];
             arr[i] = tmp;
 
-            if (--iterations == 0) break;
+            long timePassed = System.nanoTime() - startTime;
+            if (--iterations == 0 || timePassed>=timeLimit) return timePassed;
         }
+        return System.nanoTime() - startTime;
     }
 }

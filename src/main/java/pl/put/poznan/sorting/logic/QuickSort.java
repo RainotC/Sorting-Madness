@@ -17,9 +17,11 @@ public class QuickSort implements SortingAlgorithm {
      *                   if set to 0 or negative, the algorithm sorts the entire array
      */
     @Override
-    public void sort(int[] arr, int iterations) {
+    public long sort(int[] arr, int iterations, long timeLimit) {
         if (iterations == 0) iterations = -1;
-        quickSort(arr, 0, arr.length - 1, iterations);
+        long startTime = System.nanoTime();
+        quickSort(arr, 0, arr.length - 1, iterations, startTime, timeLimit);
+        return System.nanoTime() - startTime;
     }
 
     /**
@@ -30,11 +32,14 @@ public class QuickSort implements SortingAlgorithm {
      * @param high       the ending index of the subarray
      * @param iterations the remaining number of recursive calls allowed
      */
-    private void quickSort(int[] arr, int low, int high, int iterations) {
+    private void quickSort(int[] arr, int low, int high, int iterations, long startTime, long timeLimit) {
         if (low < high && iterations-- != 0) {
+            if (System.nanoTime() - startTime > timeLimit) {
+                return;
+            }
             int pivot = partition(arr, low, high);
-            quickSort(arr, low, pivot - 1, iterations);
-            quickSort(arr, pivot + 1, high, iterations);
+            quickSort(arr, low, pivot - 1, iterations, startTime, timeLimit);
+            quickSort(arr, pivot + 1, high, iterations, startTime, timeLimit);
         }
     }
 

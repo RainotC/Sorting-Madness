@@ -19,8 +19,9 @@ public class BubbleSort implements SortingAlgorithm {
      *                   the algorithm will run until the array is fully sorted
      */
     @Override
-    public void sort(int[] arr, int iterations){
+    public long sort(int[] arr, int iterations, long timeLimit) {
         if (iterations == 0) iterations = -1;
+        long startTime = System.nanoTime();
         int n = arr.length;
         boolean swapped;
         for (int i = 0; i < n - 1; i++) {
@@ -32,9 +33,14 @@ public class BubbleSort implements SortingAlgorithm {
                     arr[j + 1] = tmp;
                     swapped = true;
                 }
+                long timePassed = System.nanoTime() - startTime;
+
+                if (timePassed>=timeLimit) return timePassed;
             }
-            if (--iterations == 0 || !swapped) break;
+            long timePassed = System.nanoTime() - startTime;
+            if (--iterations == 0 || !swapped || timePassed>=timeLimit) return timePassed;
         }
+        return System.nanoTime() - startTime;
     }
 
 }
