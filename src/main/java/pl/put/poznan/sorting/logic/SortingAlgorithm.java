@@ -13,5 +13,5 @@ public interface SortingAlgorithm {
      * @param iterations the number of iterations to perform during the sorting process;
      *                   if 0 or negative algorithms sort the entire array
      */
-    void sort(int[] arr, int iterations);
+    long sort(int[] arr, int iterations, long timeLimit);
 }

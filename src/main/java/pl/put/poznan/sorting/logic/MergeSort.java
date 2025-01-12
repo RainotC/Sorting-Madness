@@ -17,9 +17,11 @@ public class MergeSort implements SortingAlgorithm{
      *                   the algorithm will sort the entire array
      */
     @Override
-    public void sort(int[] arr, int iterations) {
+    public long sort(int[] arr, int iterations, long timeLimit) {
+        long startTime = System.nanoTime();
         iterations = (iterations == 0) ? -1 : iterations+1;
-        mergeSort(arr, 0, arr.length - 1, iterations);
+        mergeSort(arr, 0, arr.length - 1, iterations, timeLimit, startTime);
+        return System.nanoTime()-startTime;
     }
 
     /**
@@ -30,14 +32,14 @@ public class MergeSort implements SortingAlgorithm{
      * @param right      the ending index of the subarray
      * @param iterations the remaining number of recursive calls allowed
      */
-    private void mergeSort(int[] arr, int left, int right, int iterations) {
+    private void mergeSort(int[] arr, int left, int right, int iterations, long timeLimit, long startTime) {
         if (left < right && iterations-- !=0) {
 
             int middle = (left + right) / 2;
 
-            mergeSort(arr, left, middle, iterations);
-            mergeSort(arr, middle + 1, right, iterations);
-
+            mergeSort(arr, left, middle, iterations, timeLimit, startTime);
+            mergeSort(arr, middle + 1, right, iterations, timeLimit, startTime);
+            if (System.nanoTime()-startTime>=timeLimit && timeLimit>0) return;
             merge(arr, left, middle, right);
         }
     }

@@ -52,8 +52,8 @@ public class SortingMadnessController {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             if (!jsonMap.containsKey("to-sort") || !jsonMap.containsKey("algorithms") ||
-                    !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order")) {
-                throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order'");
+                    !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order") || !jsonMap.containsKey("time-limit")) {
+                throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order', time-limit");
             }
 
             // init for all data in a bigger JSON
@@ -65,12 +65,14 @@ public class SortingMadnessController {
             String[] algorithms;
             int iterations;
             String order;
+            long timeLimit;
 
             try {
                 //get all basic data
                 algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
                 iterations = (int) jsonMap.get("iterations");
                 order = (String) jsonMap.get("order");
+                timeLimit = ((Number) jsonMap.get("time-limit")).longValue();
                 if (algorithms.length<1)throw new IllegalArgumentException("List of algorithms cannot be empty");
                 //check for field
                 try {
@@ -93,6 +95,7 @@ public class SortingMadnessController {
             logger.debug("algorithms: {}", (Object) algorithms);
             logger.debug("iterations: {}", iterations);
             logger.debug("order: {}", order);
+            logger.debug("time-limit: {}", timeLimit);
             logger.info("Started sorting");
             if (field != null) {
                 SortingMadness sortingMadness = new SortingMadness(algorithms);
@@ -112,13 +115,13 @@ public class SortingMadnessController {
                     fieldValuesList.add(fieldValue);
                 }
                 int[] fieldValues = fieldValuesList.stream().mapToInt(Integer::intValue).toArray();
-                results = sortingMadness.sort(fieldValues, iterations, order);
+                results = sortingMadness.sort(fieldValues, iterations, order, timeLimit);
 
                 logger.info("Collected field values: {}", Arrays.toString(fieldValues));
                 logger.info("Finished sorting");
             } else {
                 SortingMadness sortingMadness = new SortingMadness(algorithms);
-                results = sortingMadness.sort(toSortInt, iterations, order);
+                results = sortingMadness.sort(toSortInt, iterations, order, timeLimit);
             }
 
             // end for object field
@@ -126,6 +129,8 @@ public class SortingMadnessController {
             List<Map<String, Object>> sortedToSort = new ArrayList<>();
             Map<String, Object> response = new HashMap<>();
             Map<String, Object> resultMap = new HashMap<>();
+
+
             for (Result result : results) {
                 if (field != null) {
                     sortedToSort.clear();

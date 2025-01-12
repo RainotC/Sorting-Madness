@@ -17,7 +17,8 @@ public class ShellSort implements SortingAlgorithm {
      *                   if set to 0 or negative, the algorithm will sort the entire array
      */
     @Override
-    public void sort(int[] arr, int iterations) {
+    public long sort(int[] arr, int iterations, long timeLimit) {
+        long startTime = System.nanoTime();
         if (iterations == 0) iterations = -1;
         int len = arr.length;
 
@@ -30,7 +31,9 @@ public class ShellSort implements SortingAlgorithm {
                 }
                 arr[j] = tmp;
             }
-            if (--iterations == 0) break;
+            long timePassed = System.nanoTime()-startTime;
+            if (--iterations == 0|| (timePassed>=timeLimit && timeLimit>0)) return timePassed;
         }
+        return System.nanoTime()-startTime;
     }
 }
