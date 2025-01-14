@@ -9,6 +9,9 @@
         label, input, button, select { display: block; margin: 10px 0; }
         textarea { width: 100%; height: 120px; }
         pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; }
+        input#algorithms {
+            width: 25%;
+        }
     </style>
 </head>
 <body>
@@ -19,17 +22,18 @@
 <input type="text" id="field" placeholder="e.g., id">
 
 <label>Data to Sort (JSON array or int[]):</label>
-<textarea id="toSort">[
-        {"imie": "1", "id": 123},
-        {"imie": "2", "id": 321},
-        {"imie": "3", "id": 22}
-    ]</textarea>
+<textarea id="toSort">
+[
+    {"imie": "1", "id": 123},
+    {"imie": "2", "id": 321},
+    {"imie": "3", "id": 22}
+]</textarea>
 
 <label>Algorithms (comma-separated):</label>
-<input type="text" id="algorithms" value="Bubble sort,Shell sort">
+<input type="text" id="algorithms" placeholder="Bogo sort, Bubble sort, Merge sort, Quick sort, Selection Sort, Shell sort">
 
 <label>Iterations:</label>
-<input type="number" id="iterations" value="10">
+<input type="number" id="iterations" value="0">
 
 <label>Order:</label>
 <select id="order">
@@ -37,10 +41,11 @@
     <option value="DESC">Descending</option>
 </select>
 
-<label>Time Limit (ns):</label>
-<input type="number" id="timeLimit" value="1000">
+<label>Time Limit (ms):</label>
+<input type="number" id="timeLimit" value="0">
 
 <button onclick="sendSortRequest()">Sort</button>
+<button onclick="downloadResult()">Download JSON</button>
 
 <h3>Results:</h3>
 <pre id="result"></pre>
@@ -49,38 +54,39 @@
     async function sendSortRequest() {
         const field = document.getElementById("field").value.trim();
         let toSortData;
+
         try {
-            toSortData = JSON.parse(document.getElementById("toSort").value);
-            if (!Array.isArray(toSortData)) {
-                throw new Error("Input must be a valid JSON array.");
+            const toSortValue = document.getElementById("toSort").value.trim();
+            if (toSortValue) {
+                toSortData = JSON.parse(toSortValue);
+                if (!Array.isArray(toSortData)) {
+                    throw new Error("Input must be a valid JSON array.");
+                }
             }
         } catch (error) {
             document.getElementById("result").textContent = "Error: Invalid JSON format.";
             return;
         }
 
-        const algorithmsArray = document.getElementById("algorithms").value.split(",").map(a => a.trim());
-        const iterations = parseInt(document.getElementById("iterations").value);
-        const order = document.getElementById("order").value;
-        const timeLimit = parseInt(document.getElementById("timeLimit").value);
+        const algorithmsValue = document.getElementById("algorithms").value.trim();
+        const algorithmsArray = algorithmsValue ? algorithmsValue.split(",").map(a => a.trim()) : undefined;
 
-        const requestData = {
-            "algorithms": algorithmsArray,
-            "iterations": iterations,
-            "order": order,
-            "time-limit": timeLimit
-        };
+        const iterationsValue = document.getElementById("iterations").value;
+        const iterations = iterationsValue ? parseInt(iterationsValue) : undefined;
 
-        if (field) {
-            requestData["field"] = field;
-            requestData["to-sort"] = toSortData;
-        } else {
-            if (!toSortData.every(Number.isInteger)) {
-                document.getElementById("result").textContent = "Error: If no field is specified, input must be an array of integers.";
-                return;
-            }
-            requestData["to-sort"] = toSortData;
-        }
+        const orderValue = document.getElementById("order").value;
+        const order = orderValue ? orderValue : undefined;
+
+        const timeLimitValue = document.getElementById("timeLimit").value;
+        const timeLimit = timeLimitValue ? parseInt(timeLimitValue) : undefined;
+
+        const requestData = {};
+        if (field) requestData["field"] = field;
+        if (toSortData !== undefined) requestData["to-sort"] = toSortData;
+        if (algorithmsArray) requestData["algorithms"] = algorithmsArray;
+        if (iterations !== undefined) requestData["iterations"] = iterations;
+        if (order) requestData["order"] = order;
+        if (timeLimit !== undefined) requestData["time-limit"] = timeLimit;
 
         try {
             const response = await fetch("/", {
@@ -95,6 +101,23 @@
             document.getElementById("result").textContent = "Error: " + error.message;
         }
     }
+
+    function downloadResult() {
+        const resultText = document.getElementById("result").textContent;
+        if (!resultText) {
+            alert("No result to download!");
+            return;
+        }
+
+        const blob = new Blob([resultText], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "sorted_result.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
 </script>
 
 </body>

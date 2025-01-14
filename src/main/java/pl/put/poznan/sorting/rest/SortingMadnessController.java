@@ -1,6 +1,8 @@
 package pl.put.poznan.sorting.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -89,7 +91,13 @@ public class SortingMadnessController {
                 }
             } catch(IllegalArgumentException | ClassCastException e){
                 logger.error("Invalid data types in input", e); // i don't know if it's necessary if throws show on log anyway
-                return "{\"error\": \"Invalid data types in input: "+e.getMessage()+"\"}"; //showing to client
+
+                // Create a JSON object for the error response
+                ObjectNode errorResponse = objectMapper.createObjectNode();
+                errorResponse.put("error", "Invalid data types in input: " + e.getMessage());
+
+                // Return the error response as a JSON string
+                return objectMapper.writeValueAsString(errorResponse);
             }
             // Log received parameters
             logger.debug("algorithms: {}", (Object) algorithms);
@@ -108,10 +116,9 @@ public class SortingMadnessController {
                 }
                 for (Map<String, Object> item : toSort) {
                     Object fieldValueObject = item.get(field);
-                    if (!(fieldValueObject instanceof Integer)) {
+                    if (!(fieldValueObject instanceof Integer fieldValue)) {
                         throw new IllegalArgumentException("Field '" + field + "' must contain integers. Found: " + fieldValueObject);
                     }
-                    Integer fieldValue = (Integer) fieldValueObject;
                     fieldValuesList.add(fieldValue);
                 }
                 int[] fieldValues = fieldValuesList.stream().mapToInt(Integer::intValue).toArray();
@@ -132,6 +139,8 @@ public class SortingMadnessController {
 
 
             for (Result result : results) {
+                logger.debug("algorithm: {}", result.getAlgorithm());
+                logger.debug("timeElapsed [ns]: {}", result.getTime());
                 if (field != null) {
                     sortedToSort.clear();
                     for (int j = 0; j < result.getSortedArray().length; j++) {
@@ -142,16 +151,14 @@ public class SortingMadnessController {
                             }
                         }
                     }
-                    logger.debug("algorithm: {}", result.getAlgorithm());
-                    logger.debug("timeElapsed [ns]: {}", result.getTime());
+
                     logger.debug("sorted: {}", sortedToSort);
                     Map<String, Object> algorithmResult = new HashMap<>();
                     algorithmResult.put("timeElapsed [ns]", result.getTime());
                     algorithmResult.put("sorted", sortedToSort);
                     resultMap.put(result.getAlgorithm(), algorithmResult);
                 } else {
-                    logger.debug("algorithm: {}", result.getAlgorithm());
-                    logger.debug("timeElapsed [ns]: {}", result.getTime());
+
                     logger.debug("result: {}", result.getSortedArray());
                     Map<String, Object> algorithmResult = new HashMap<>();
                     algorithmResult.put("timeElapsed [ns]", result.getTime());
@@ -165,7 +172,19 @@ public class SortingMadnessController {
             return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
             logger.error("Error processing input", e); // i don't know if it's necessary if throws show on log anyway
-            return "{\"error\": \""+ e.getMessage()+"\"}";
+
+            try {
+                // Create a JSON object for the error response
+                ObjectNode errorResponse = objectMapper.createObjectNode();
+                errorResponse.put("error", "Error: " + e.getMessage());
+
+                // Return the error response as a JSON string
+                return objectMapper.writeValueAsString(errorResponse);
+            } catch (JsonProcessingException jsonException) {
+                // Handle any unexpected JSON serialization errors
+                logger.error("Error serializing error response", jsonException);
+                return "{\"error\": \"An unexpected error occurred while processing the request.\"}";
+            }
         }
     }
 }
