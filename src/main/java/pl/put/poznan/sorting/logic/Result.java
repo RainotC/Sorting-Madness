@@ -11,12 +11,12 @@ public class Result {
     private long time;
 
     /**
-     * The result array from the sorting algorithm.
+     * The result int array from the sorting algorithm.
      */
     private int[] sortedArray;
 
     /**
-     * The result array from the sorting algorithm.
+     * The result String array from the sorting algorithm.
      */
     private String[] sortedStringArray;
 
@@ -27,10 +27,10 @@ public class Result {
 
     /**
      * Constructs a {@code Result} object with the specified execution time,
-     * sorted array, and algorithm name.
+     * sorted int array, and algorithm name.
      *
      * @param time        the execution time of the sorting operation in nanoseconds
-     * @param sortedArray the array sorted by the algorithm
+     * @param sortedArray the int array sorted by the algorithm
      * @param algorithm   the name of the sorting algorithm used
      */
     public Result(long time, int[] sortedArray, String algorithm) {
@@ -41,10 +41,10 @@ public class Result {
 
     /**
      * Constructs a {@code Result} object with the specified execution time,
-     * sorted array, and algorithm name.
+     * sorted String array, and algorithm name.
      *
      * @param time        the execution time of the sorting operation in nanoseconds
-     * @param sortedArray the array sorted by the algorithm
+     * @param sortedArray the String array sorted by the algorithm
      * @param algorithm   the name of the sorting algorithm used
      */
     public Result(long time, String[] sortedArray, String algorithm) {
@@ -63,18 +63,18 @@ public class Result {
     }
 
     /**
-     * Returns the sorted array.
+     * Returns the sorted int array.
      *
-     * @return the sorted array
+     * @return the sorted int array
      */
     public int[] getSortedArray() {
         return sortedArray;
     }
 
     /**
-     * Returns the sorted array.
+     * Returns the sorted String array.
      *
-     * @return the sorted array
+     * @return the sorted String array
      */
     public String[] getSortedStringArray() {
         return sortedStringArray;

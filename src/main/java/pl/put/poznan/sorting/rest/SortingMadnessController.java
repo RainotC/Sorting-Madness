@@ -12,9 +12,11 @@ import java.util.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
- * The {@code SortingMadnessController} class is a REST controller that handles requests
- * for sorting operations. It allows users to send data and parameters via a GET request
- * and receive sorted results in JSON format.
+ * The {@code SortingMadnessController} class is a REST controller that handles HTTP requests
+ * for sorting operations using various algorithms. It accepts user-provided data and parameters,
+ * sorts the data accordingly, and returns the sorted result along with performance metrics.
+ * This class is designed to work with sorting tasks that involve multiple sorting algorithms
+ * and can handle different types of data (integers or JSON objects).
  */
 @RestController
 @RequestMapping("/")  // Handle requests to the root
@@ -23,27 +25,41 @@ public class SortingMadnessController {
     private static final Logger logger = LoggerFactory.getLogger(SortingMadnessController.class);
 
     /**
-     * Handles GET requests for sorting data.
-     * Expects a JSON body with the following fields:
+     * Handles POST requests for sorting data. The input JSON must contain the following fields:
      * <ul>
-     *     <li>{@code to-sort} - an array of integers or lists of objects to be sorted</li>
-     *     <li>{@code algorithms} - an array of sorting algorithm names to use</li>
-     *     <li>{@code iterations} - the maximum number of iterations to perform</li>
-     *     <li>{@code order} - the sorting order, e.g., ascending or descending</li>
+     *     <li>{@code to-sort} - A list of integers or objects to be sorted. The data type depends on the presence of the {@code field} parameter.</li>
+     *     <li>{@code algorithms} - A list of sorting algorithm names (e.g., BubbleSort, QuickSort).</li>
+     *     <li>{@code iterations} - The maximum number of iterations to perform during sorting.</li>
+     *     <li>{@code order} - The sorting order (either "ascending" or "descending").</li>
+     *     <li>{@code time-limit} - The time limit in nanoseconds for the sorting operations.</li>
      * </ul>
+     * Optionally, the {@code field} parameter can be included if sorting JSON objects based on a specific field (e.g., sorting objects by an "age" field).
      *
-     * Example request body:
+     * Example request body for sorting integers:
      * <pre>
      * {
      *     "to-sort": [5, 3, 8, 6, 2],
      *     "algorithms": ["BubbleSort", "QuickSort"],
      *     "iterations": 100,
-     *     "order": "ascending"
+     *     "order": "ascending",
+     *     "time-limit": 1000000
      * }
      * </pre>
      *
-     * @param jsonMap a map containing the input parameters as JSON
-     * @return a JSON response containing the sorted array and elapsed time in nanoseconds
+     * Example request body for sorting JSON objects:
+     * <pre>
+     * {
+     *     "to-sort": [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}],
+     *     "algorithms": ["QuickSort"],
+     *     "iterations": 50,
+     *     "order": "ascending",
+     *     "field": "age",
+     *     "time-limit": 1000000
+     * }
+     * </pre>
+     *
+     * @param jsonMap a map containing the input parameters as a JSON object
+     * @return a JSON response containing the sorted data and time elapsed for each algorithm
      *         or an error message if the input is invalid
      */
     @PostMapping(produces = "application/json")
@@ -88,13 +104,8 @@ public class SortingMadnessController {
                 }
             } catch (IllegalArgumentException | ClassCastException e) {
                 logger.error("Invalid data types in input", e);
-                
-                // Create a JSON object for the error response
-                ObjectNode errorResponse = objectMapper.createObjectNode();
-                errorResponse.put("error", "Invalid data types in input: " + e.getMessage());
 
-                // Return the error response as a JSON string
-                return objectMapper.writeValueAsString(errorResponse);
+                return createErrorResponse(objectMapper, "Invalid data types in input: " + e.getMessage());
             }
             // Log received parameters
             logger.debug("algorithms: {}", (Object) algorithms);
@@ -149,69 +160,87 @@ public class SortingMadnessController {
                 SortingMadness sortingMadness = new SortingMadness(algorithms);
                 results = sortingMadness.sort(toSortInt, iterations, order, timeLimit);
             }
+            // Create response with sorted results and elapsed time
+            return createSortedResponse(objectMapper, results, toSort, field, containsString);
+        } catch (Exception e) {
+            logger.error("Error processing input", e);
+            return createErrorResponse(new ObjectMapper(), "Error: " + e.getMessage());
+        }
+    }
 
-            List<Map<String, Object>> sortedToSort = new ArrayList<>();
-            Map<String, Object> response = new HashMap<>();
-            Map<String, Object> resultMap = new HashMap<>();
+    /**
+     * Creates a JSON response with the error message.
+     *
+     * @param objectMapper the Jackson ObjectMapper instance
+     * @param message the error message
+     * @return a JSON string with the error message
+     */
+    private String createErrorResponse(ObjectMapper objectMapper, String message) {
+        try {
+            ObjectNode errorResponse = objectMapper.createObjectNode();
+            errorResponse.put("error", message);
+            return objectMapper.writeValueAsString(errorResponse);
+        } catch (JsonProcessingException e) {
+            logger.error("Error serializing error response", e);
+            return "{\"error\": \"An unexpected error occurred while processing the request.\"}";
+        }
+    }
 
-            for (Result result : results) {
-                logger.debug("algorithm: {}", result.getAlgorithm());
-                logger.debug("timeElapsed [ns]: {}", result.getTime());
+    /**
+     * Creates a JSON response containing the sorted results and performance metrics.
+     *
+     * @param objectMapper the Jackson ObjectMapper instance
+     * @param results the list of sorting results
+     * @param toSort the original data to be sorted
+     * @param field the field to sort by (if applicable)
+     * @param containsString whether the field contains strings
+     * @return a JSON string with the sorted data and performance metrics
+     */
+    private String createSortedResponse(ObjectMapper objectMapper, List<Result> results, List<Map<String, Object>> toSort,
+                                        String field, boolean containsString) throws JsonProcessingException {
+        List<Map<String, Object>> sortedToSort = new ArrayList<>();
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
 
-                if (field != null) {
-                    sortedToSort.clear();
-                    if (containsString) {
-                        for (int j = 0; j < result.getSortedStringArray().length; j++) {
-                            for (Map<String, Object> item : toSort) {
-                                if (item.containsKey(field) && String.valueOf(item.get(field)).equals(result.getSortedStringArray()[j]) && !sortedToSort.contains(item)) {
-                                    sortedToSort.add(item);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        for (int j = 0; j < result.getSortedArray().length; j++) {
-                            for (Map<String, Object> item : toSort) {
-                                if (item.containsKey(field) && item.get(field).equals(result.getSortedArray()[j]) && !sortedToSort.contains(item)) {
-                                    sortedToSort.add(item);
-                                    break;
-                                }
+        for (Result result : results) {
+            logger.debug("algorithm: {}", result.getAlgorithm());
+            logger.debug("timeElapsed [ns]: {}", result.getTime());
+
+            if (field != null) {
+                sortedToSort.clear();
+                if (containsString) {
+                    for (int j = 0; j < result.getSortedStringArray().length; j++) {
+                        for (Map<String, Object> item : toSort) {
+                            if (item.containsKey(field) && String.valueOf(item.get(field)).equals(result.getSortedStringArray()[j]) && !sortedToSort.contains(item)) {
+                                sortedToSort.add(item);
+                                break;
                             }
                         }
                     }
-
-
-                    logger.debug("sorted: {}", sortedToSort);
-                    Map<String, Object> algorithmResult = new HashMap<>();
-                    algorithmResult.put("timeElapsed [ns]", result.getTime());
-                    algorithmResult.put("sorted", sortedToSort);
-                    resultMap.put(result.getAlgorithm(), algorithmResult);
                 } else {
-                    logger.debug("result: {}", result.getSortedArray());
-                    Map<String, Object> algorithmResult = new HashMap<>();
-                    algorithmResult.put("timeElapsed [ns]", result.getTime());
-                    algorithmResult.put("sorted", result.getSortedArray());
-                    resultMap.put(result.getAlgorithm(), algorithmResult);
+                    for (int j = 0; j < result.getSortedArray().length; j++) {
+                        for (Map<String, Object> item : toSort) {
+                            if (item.containsKey(field) && item.get(field).equals(result.getSortedArray()[j]) && !sortedToSort.contains(item)) {
+                                sortedToSort.add(item);
+                                break;
+                            }
+                        }
+                    }
                 }
-            }
-            response.put("results", resultMap);
-            logger.info("Results sent");
-            // Return response as JSON
-            return objectMapper.writeValueAsString(response);
-        } catch (Exception e) {
-            logger.error("Error processing input", e);
-            try {
-                // Create a JSON object for the error response
-                ObjectNode errorResponse = objectMapper.createObjectNode();
-                errorResponse.put("error", "Error: " + e.getMessage());
 
-                // Return the error response as a JSON string
-                return objectMapper.writeValueAsString(errorResponse);
-            } catch (JsonProcessingException jsonException) {
-                // Handle any unexpected JSON serialization errors
-                logger.error("Error serializing error response", jsonException);
-                return "{\"error\": \"An unexpected error occurred while processing the request.\"}";
+                Map<String, Object> algorithmResult = new HashMap<>();
+                algorithmResult.put("timeElapsed [ns]", result.getTime());
+                algorithmResult.put("sorted", sortedToSort);
+                resultMap.put(result.getAlgorithm(), algorithmResult);
+            } else {
+                Map<String, Object> algorithmResult = new HashMap<>();
+                algorithmResult.put("timeElapsed [ns]", result.getTime());
+                algorithmResult.put("sorted", result.getSortedArray());
+                resultMap.put(result.getAlgorithm(), algorithmResult);
             }
         }
+        response.put("results", resultMap);
+        logger.info("Results sent");
+        return objectMapper.writeValueAsString(response);
     }
 }

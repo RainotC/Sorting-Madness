@@ -7,18 +7,18 @@ package pl.put.poznan.sorting.logic;
 public interface SortingAlgorithm {
 
     /**
-     * Sorts the given array in place using the implemented sorting algorithm.
+     * Sorts the given int array in place using the implemented sorting algorithm.
      *
-     * @param arr        the array to be sorted
+     * @param arr        the int array to be sorted
      * @param iterations the number of iterations to perform during the sorting process;
      *                   if 0 or negative algorithms sort the entire array
      */
     long sort(int[] arr, int iterations, long timeLimit);
 
     /**
-     * Sorts the given array in place using the implemented sorting algorithm.
+     * Sorts the given String array in place using the implemented sorting algorithm.
      *
-     * @param arr        the array to be sorted
+     * @param arr        the String array to be sorted
      * @param iterations the number of iterations to perform during the sorting process;
      *                   if 0 or negative algorithms sort the entire array
      */
