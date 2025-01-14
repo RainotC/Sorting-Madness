@@ -45,8 +45,8 @@ public class SortingMadnessController {
      * @return a JSON response containing the sorted array and elapsed time in nanoseconds
      *         or an error message if the input is invalid
      */
-    @GetMapping(produces = "application/json")  // This is a GET request
-    public String get(@RequestBody Map<String, Object> jsonMap) {  // Extract JSON from body
+    @PostMapping(produces = "application/json")  // This is a GET request
+    public String post(@RequestBody Map<String, Object> jsonMap) {  // Extract JSON from body
         logger.info("Connenction request recieved");
 
         ObjectMapper objectMapper = new ObjectMapper();
