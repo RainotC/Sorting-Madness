@@ -14,4 +14,13 @@ public interface SortingAlgorithm {
      *                   if 0 or negative algorithms sort the entire array
      */
     long sort(int[] arr, int iterations, long timeLimit);
+
+    /**
+     * Sorts the given array in place using the implemented sorting algorithm.
+     *
+     * @param arr        the array to be sorted
+     * @param iterations the number of iterations to perform during the sorting process;
+     *                   if 0 or negative algorithms sort the entire array
+     */
+    long sort(String[] arr, int iterations, long timeLimit);
 }

@@ -16,6 +16,11 @@ public class Result {
     private int[] sortedArray;
 
     /**
+     * The result array from the sorting algorithm.
+     */
+    private String[] sortedStringArray;
+
+    /**
      * The name of the algorithm used for sorting.
      */
     private String algorithm; // Algorithm name
@@ -35,6 +40,20 @@ public class Result {
     }
 
     /**
+     * Constructs a {@code Result} object with the specified execution time,
+     * sorted array, and algorithm name.
+     *
+     * @param time        the execution time of the sorting operation in nanoseconds
+     * @param sortedArray the array sorted by the algorithm
+     * @param algorithm   the name of the sorting algorithm used
+     */
+    public Result(long time, String[] sortedArray, String algorithm) {
+        this.time = time;
+        this.sortedStringArray = sortedArray;
+        this.algorithm = algorithm;
+    }
+
+    /**
      * Returns the execution time of the sorting operation.
      *
      * @return the execution time in nanoseconds
@@ -50,6 +69,15 @@ public class Result {
      */
     public int[] getSortedArray() {
         return sortedArray;
+    }
+
+    /**
+     * Returns the sorted array.
+     *
+     * @return the sorted array
+     */
+    public String[] getSortedStringArray() {
+        return sortedStringArray;
     }
 
     /**

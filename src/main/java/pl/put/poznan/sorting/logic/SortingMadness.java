@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * {@code SortingMadness} class provides functionality for sorting an array of integers
- * using various algorithms. It uses given algorithms and provides the option
- * to reverse order. It also counts time that algorithms need to sort given array.
+ * {@code SortingMadness} class provides functionality for sorting arrays using various algorithms.
+ * It supports sorting both integers and strings, and provides the option to reverse the order.
  */
 public class SortingMadness {
 
@@ -26,9 +25,9 @@ public class SortingMadness {
     }
 
     /**
-     * Reverses the given array in place.
+     * Reverses the given integer array in place.
      *
-     * @param array the array to be reversed
+     * @param array the int array to be reversed
      */
     private static void reverseInPlace(int[] array) {
         int left = 0, right = array.length - 1;
@@ -41,9 +40,24 @@ public class SortingMadness {
     }
 
     /**
-     * Sorts the given array using the specified algorithms and configurations.
+     * Reverses the given array in place (used for both int[] and String[]).
      *
-     * @param toSort     the array to be sorted
+     * @param array the array to be reversed
+     */
+    private static <T> void reverseInPlace(T[] array) {
+        int left = 0, right = array.length - 1;
+        while (left < right) {
+            // Swap elements
+            T temp = array[left];
+            array[left++] = array[right];
+            array[right--] = temp;
+        }
+    }
+
+    /**
+     * Sorts the given int array using the specified algorithms and configurations.
+     *
+     * @param toSort     the int array to be sorted
      * @param iterations the number of iterations to use in the sorting algorithm
      * @param order      the desired order of the result ("asc" for ascending, "desc" for descending)
      * @return a list of Result objects containing the sorted arrays, execution times,
@@ -57,9 +71,34 @@ public class SortingMadness {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
             int[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
-            long timePassed = sorter.sort(arrayCopy,iterations, timeLimit);
-            if (order.equalsIgnoreCase("desc")) reverseInPlace((arrayCopy));
+            long timePassed = sorter.sort(arrayCopy, iterations, timeLimit);
+            if (order.equalsIgnoreCase("desc")) reverseInPlace(arrayCopy);
 
+            results.add(new Result(timePassed, arrayCopy, algorithm)); // Add result
+        }
+
+        return results;
+    }
+
+    /**
+     * Sorts the given String array using the specified algorithms and configurations.
+     *
+     * @param toSort     the String array to be sorted
+     * @param iterations the number of iterations to use in the sorting algorithm
+     * @param order      the desired order of the result ("asc" for ascending, "desc" for descending)
+     * @return a list of Result objects containing the sorted arrays, execution times,
+     *         and the names of the algorithms used
+     * @throws IllegalArgumentException if an unknown algorithm name is provided
+     */
+    public List<Result> sort(String[] toSort, int iterations, String order, long timeLimit) {
+        List<Result> results = new ArrayList<>();
+
+        for (String algorithm : usedAlgorithms) {
+            SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
+
+            String[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
+            long timePassed = sorter.sort(arrayCopy, iterations, timeLimit);
+            if (order.equalsIgnoreCase("desc")) reverseInPlace(arrayCopy);
 
             results.add(new Result(timePassed, arrayCopy, algorithm)); // Add result
         }
