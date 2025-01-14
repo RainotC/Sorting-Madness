@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Madness</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label, input, button, select { display: block; margin: 10px 0; }
+        textarea { width: 100%; height: 120px; }
+        pre { background: #f4f4f4; padding: 10px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<h2>Sorting Madness</h2>
+
+<label>Sorting Field (leave empty for simple arrays):</label>
+<input type="text" id="field" placeholder="e.g., id">
+
+<label>Data to Sort (JSON array or int[]):</label>
+<textarea id="toSort">[
+        {"imie": "1", "id": 123},
+        {"imie": "2", "id": 321},
+        {"imie": "3", "id": 22}
+    ]</textarea>
+
+<label>Algorithms (comma-separated):</label>
+<input type="text" id="algorithms" value="Bubble sort,Shell sort">
+
+<label>Iterations:</label>
+<input type="number" id="iterations" value="10">
+
+<label>Order:</label>
+<select id="order">
+    <option value="ASC">Ascending</option>
+    <option value="DESC">Descending</option>
+</select>
+
+<label>Time Limit (ns):</label>
+<input type="number" id="timeLimit" value="1000">
+
+<button onclick="sendSortRequest()">Sort</button>
+
+<h3>Results:</h3>
+<pre id="result"></pre>
+
+<script>
+    async function sendSortRequest() {
+        const field = document.getElementById("field").value.trim();
+        let toSortData;
+        try {
+            toSortData = JSON.parse(document.getElementById("toSort").value);
+            if (!Array.isArray(toSortData)) {
+                throw new Error("Input must be a valid JSON array.");
+            }
+        } catch (error) {
+            document.getElementById("result").textContent = "Error: Invalid JSON format.";
+            return;
+        }
+
+        const algorithmsArray = document.getElementById("algorithms").value.split(",").map(a => a.trim());
+        const iterations = parseInt(document.getElementById("iterations").value);
+        const order = document.getElementById("order").value;
+        const timeLimit = parseInt(document.getElementById("timeLimit").value);
+
+        const requestData = {
+            "algorithms": algorithmsArray,
+            "iterations": iterations,
+            "order": order,
+            "time-limit": timeLimit
+        };
+
+        if (field) {
+            requestData["field"] = field;
+            requestData["to-sort"] = toSortData;
+        } else {
+            if (!toSortData.every(Number.isInteger)) {
+                document.getElementById("result").textContent = "Error: If no field is specified, input must be an array of integers.";
+                return;
+            }
+            requestData["to-sort"] = toSortData;
+        }
+
+        try {
+            const response = await fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestData)
+            });
+
+            const result = await response.json();
+            document.getElementById("result").textContent = JSON.stringify(result, null, 2);
+        } catch (error) {
+            document.getElementById("result").textContent = "Error: " + error.message;
+        }
+    }
+</script>
+
+</body>
+</html>
