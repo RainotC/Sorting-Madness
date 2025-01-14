@@ -45,6 +45,7 @@
 <input type="number" id="timeLimit" value="0">
 
 <button onclick="sendSortRequest()">Sort</button>
+<button onclick="downloadResult()">Download JSON</button>
 
 <h3>Results:</h3>
 <pre id="result"></pre>
@@ -99,6 +100,22 @@
         } catch (error) {
             document.getElementById("result").textContent = "Error: " + error.message;
         }
+    }
+
+    function downloadResult() {
+        const resultText = document.getElementById("result").textContent;
+        if (!resultText) {
+            alert("No result to download!");
+            return;
+        }
+
+        const blob = new Blob([resultText], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "sorted_result.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
 </script>
