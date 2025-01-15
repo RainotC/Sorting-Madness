@@ -60,6 +60,7 @@ public class SortingMadness {
      * @param toSort     the int array to be sorted
      * @param iterations the number of iterations to use in the sorting algorithm
      * @param order      the desired order of the result ("asc" for ascending, "desc" for descending)
+     * @param timeLimit  the maximum time allowed (in milliseconds) for the sorting process
      * @return a list of Result objects containing the sorted arrays, execution times,
      *         and the names of the algorithms used
      * @throws IllegalArgumentException if an unknown algorithm name is provided
@@ -86,6 +87,7 @@ public class SortingMadness {
      * @param toSort     the String array to be sorted
      * @param iterations the number of iterations to use in the sorting algorithm
      * @param order      the desired order of the result ("asc" for ascending, "desc" for descending)
+     * @param timeLimit  the maximum time allowed (in milliseconds) for the sorting process
      * @return a list of Result objects containing the sorted arrays, execution times,
      *         and the names of the algorithms used
      * @throws IllegalArgumentException if an unknown algorithm name is provided

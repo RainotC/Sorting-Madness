@@ -12,6 +12,9 @@ public interface SortingAlgorithm {
      * @param arr        the int array to be sorted
      * @param iterations the number of iterations to perform during the sorting process;
      *                   if 0 or negative algorithms sort the entire array
+     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process;
+     *                   if 0 or negative algorithmss sort without time limit
+     * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     long sort(int[] arr, int iterations, long timeLimit);
 
@@ -21,6 +24,9 @@ public interface SortingAlgorithm {
      * @param arr        the String array to be sorted
      * @param iterations the number of iterations to perform during the sorting process;
      *                   if 0 or negative algorithms sort the entire array
+     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process;
+     *                   if 0 or negative algorithmss sort without time limit
+     * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     long sort(String[] arr, int iterations, long timeLimit);
 }
