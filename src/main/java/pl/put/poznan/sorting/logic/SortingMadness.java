@@ -1,8 +1,6 @@
 package pl.put.poznan.sorting.logic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * {@code SortingMadness} class provides functionality for sorting arrays using various algorithms.
@@ -13,7 +11,7 @@ public class SortingMadness {
     /**
      * The list of sorting algorithms to be used.
      */
-    private final String[] usedAlgorithms;
+    private String[] usedAlgorithms;
 
     /**
      * Constructs a new {@code SortingMadness} instance.
@@ -68,6 +66,10 @@ public class SortingMadness {
     public List<Result> sort(int[] toSort, int iterations, String order, long timeLimit) {
         List<Result> results = new ArrayList<>();
 
+        if (usedAlgorithms == null || usedAlgorithms.length == 0) {
+            this.usedAlgorithms = chooseSortingAlgorithm(toSort);
+        }
+
         for (String algorithm : usedAlgorithms) {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
@@ -94,6 +96,10 @@ public class SortingMadness {
      */
     public List<Result> sort(String[] toSort, int iterations, String order, long timeLimit) {
         List<Result> results = new ArrayList<>();
+
+        if (usedAlgorithms == null || usedAlgorithms.length == 0) {
+            this.usedAlgorithms = chooseSortingAlgorithm(toSort);
+        }
 
         for (String algorithm : usedAlgorithms) {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
@@ -127,5 +133,109 @@ public class SortingMadness {
             default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
         }
         return sorter;
+    }
+
+    /**
+     * Determines whether an integer array is mostly sorted by counting the number of inversions.
+     * An inversion occurs when a pair of adjacent elements is out of order.
+     * The array is considered mostly sorted if the number of inversions is less than or equal to
+     * a given threshold multiplied by the array's length.
+     *
+     * @param arr the integer array to check
+     * @param threshold the fraction of inversions relative to the array length
+     * @return true if the array is mostly sorted, false otherwise
+     */
+    private static boolean isMostlySorted(int[] arr, double threshold) {
+        int inversions = 0;
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i + 1]) {
+                inversions++;
+            }
+        }
+        return inversions <= threshold * arr.length;
+    }
+
+    /**
+     * Determines whether an integer array has a small number of unique values.
+     * The array is considered to have few unique values if the number of unique values
+     * is less than or equal to the given threshold multiplied by the array's length.
+     *
+     * @param arr the integer array to check
+     * @param threshold the fraction of unique values relative to the array length
+     * @return true if the array has few unique values, false otherwise
+     */
+    private static boolean hasFewUniqueValues(int[] arr, double threshold) {
+        Set<Integer> uniqueValues = new HashSet<>();
+        for (int num : arr) {
+            uniqueValues.add(num);
+        }
+        return uniqueValues.size() <= threshold * arr.length;
+    }
+
+    /**
+     * Chooses a sorting algorithm for an integer array based on whether it is mostly sorted
+     * or has few unique values. If the array is mostly sorted or has few unique values, it
+     * selects Merge Sort; otherwise, Quick Sort is selected.
+     *
+     * @param arr the integer array to evaluate
+     * @return an array of sorting algorithms to be used
+     */
+    private static String[] chooseSortingAlgorithm(int[] arr) {
+        if (isMostlySorted(arr, 0.1) || hasFewUniqueValues(arr, 0.2)) {
+            return new String[]{"Merge sort"};
+        }
+        return new String[]{"Quick sort"};
+    }
+
+    /**
+     * Determines whether a string array is mostly sorted by counting the number of inversions.
+     * An inversion occurs when a pair of adjacent elements is out of order.
+     * The array is considered mostly sorted if the number of inversions is less than or equal to
+     * a given threshold multiplied by the array's length.
+     *
+     * @param arr the String array to check
+     * @param threshold the fraction of inversions relative to the array length
+     * @return true if the array is mostly sorted, false otherwise
+     */
+    private static boolean isMostlySorted(String[] arr, double threshold) {
+        int inversions = 0;
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (arr[i].compareTo(arr[i + 1]) > 0) {
+                inversions++;
+            }
+        }
+        return inversions <= threshold * arr.length;
+    }
+
+    /**
+     * Determines whether a string array has a small number of unique values.
+     * The array is considered to have few unique values if the number of unique values
+     * is less than or equal to the given threshold multiplied by the array's length.
+     *
+     * @param arr the String array to check
+     * @param threshold the fraction of unique values relative to the array length
+     * @return true if the array has few unique values, false otherwise
+     */
+    private static boolean hasFewUniqueValues(String[] arr, double threshold) {
+        Set<String> uniqueValues = new HashSet<>();
+        for (String s : arr) {
+            uniqueValues.add(s);
+        }
+        return uniqueValues.size() <= threshold * arr.length;
+    }
+
+    /**
+     * Chooses a sorting algorithm for a string array based on whether it is mostly sorted
+     * or has few unique values. If the array is mostly sorted or has few unique values, it
+     * selects Merge Sort; otherwise, Quick Sort is selected.
+     *
+     * @param arr the String array to evaluate
+     * @return an array of sorting algorithms to be used
+     */
+    private static String[] chooseSortingAlgorithm(String[] arr) {
+        if (isMostlySorted(arr, 0.1) || hasFewUniqueValues(arr, 0.2)) {
+            return new String[]{"Merge sort"};
+        }
+        return new String[]{"Quick sort"};
     }
 }

@@ -68,8 +68,8 @@ public class SortingMadnessController {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            if (!jsonMap.containsKey("algorithms") || !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order") || !jsonMap.containsKey("time-limit")) {
-                throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order', time-limit");
+            if (!jsonMap.containsKey("iterations") || !jsonMap.containsKey("order") || !jsonMap.containsKey("time-limit")) {
+                throw new IllegalArgumentException("Missing required fields: 'iterations', 'order', time-limit");
             }
 
             String field = null;
@@ -83,11 +83,12 @@ public class SortingMadnessController {
 
             try {
                 //get all basic data
-                algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
+
                 iterations = (int) jsonMap.get("iterations");
                 order = (String) jsonMap.get("order");
                 timeLimit = ((Number) jsonMap.get("time-limit")).longValue();
-                if (algorithms.length<1)throw new IllegalArgumentException("List of algorithms cannot be empty");
+                algorithms = objectMapper.convertValue(jsonMap.get("algorithms"), String[].class);
+
                 //check for field
                 try {
                     field = (String) jsonMap.get("field");
@@ -100,7 +101,7 @@ public class SortingMadnessController {
                     toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<List<Map<String, Object>>>() {});
                 } else {
                     toSortInt = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
-                    if (toSortInt == null) {
+                    if (toSortInt == null || toSortInt.length == 0) {
                         logger.debug("No 'to-sort' -- sorting random array");
                         toSortInt = generateRandomArray();
                     }
@@ -119,8 +120,8 @@ public class SortingMadnessController {
             logger.info("Started sorting");
 
             boolean containsString = false;
+            SortingMadness sortingMadness = new SortingMadness(algorithms);
             if (field != null) {
-                SortingMadness sortingMadness = new SortingMadness(algorithms);
                 List<Object> fieldValuesList = new ArrayList<>();
                 for (Map<String, Object> item : toSort) {
                     if (!item.containsKey(field)) {
@@ -161,7 +162,6 @@ public class SortingMadnessController {
 
                 logger.info("Finished sorting");
             } else {
-                SortingMadness sortingMadness = new SortingMadness(algorithms);
                 results = sortingMadness.sort(toSortInt, iterations, order, timeLimit);
             }
             // Create response with sorted results and elapsed time
