@@ -68,8 +68,7 @@ public class SortingMadnessController {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            if (!jsonMap.containsKey("to-sort") || !jsonMap.containsKey("algorithms") ||
-                    !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order") || !jsonMap.containsKey("time-limit")) {
+            if (!jsonMap.containsKey("algorithms") || !jsonMap.containsKey("iterations") || !jsonMap.containsKey("order") || !jsonMap.containsKey("time-limit")) {
                 throw new IllegalArgumentException("Missing required fields: 'to-sort', 'algorithms', 'iterations', 'order', time-limit");
             }
 
@@ -101,7 +100,12 @@ public class SortingMadnessController {
                     toSort = objectMapper.convertValue(jsonMap.get("to-sort"), new TypeReference<List<Map<String, Object>>>() {});
                 } else {
                     toSortInt = objectMapper.convertValue(jsonMap.get("to-sort"), int[].class);
+                    if (toSortInt == null) {
+                        logger.debug("No 'to-sort' -- sorting random array");
+                        toSortInt = generateRandomArray();
+                    }
                 }
+
             } catch (IllegalArgumentException | ClassCastException e) {
                 logger.error("Invalid data types in input", e);
 
@@ -166,6 +170,30 @@ public class SortingMadnessController {
             logger.error("Error processing input", e);
             return createErrorResponse(new ObjectMapper(), "Error: " + e.getMessage());
         }
+    }
+
+    /**
+     * Generates an array of random integers.
+     * <p>
+     * The size of the array is randomly chosen between 2 and 100 (inclusive).
+     * Each element in the array is a random integer between 0 and 1000 (inclusive).
+     * </p>
+     *
+     * @return an array of random integers with a randomly determined size
+     */
+    private static int[] generateRandomArray() {
+        Random random = new Random();
+
+        int minSize = 2, maxSize = 100;
+        int size = random.nextInt(maxSize - minSize + 1) + minSize;
+        int[] array = new int[size];
+
+        int min = 0, max = 1000;
+        for (int i = 0; i < size; i++) {
+            array[i] = random.nextInt(max - min + 1) + min; // Generates numbers in range [min, max]
+        }
+
+        return array;
     }
 
     /**

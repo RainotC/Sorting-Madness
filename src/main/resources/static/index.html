@@ -21,7 +21,7 @@
 <label>Sorting Field (leave empty for simple arrays):</label>
 <input type="text" id="field" placeholder="e.g., id">
 
-<label>Data to Sort (JSON array or int[]):</label>
+<label>Data to Sort (JSON array, int[] or empty for random list):</label>
 <textarea id="toSort">
 [
     {"imie": "1", "id": 123},
@@ -32,7 +32,7 @@
 <label>Algorithms (comma-separated):</label>
 <input type="text" id="algorithms" placeholder="Bogo sort, Bubble sort, Merge sort, Quick sort, Selection Sort, Shell sort">
 
-<label>Iterations:</label>
+<label>Iterations (leave 0 for infinite iterations):</label>
 <input type="number" id="iterations" value="0">
 
 <label>Order:</label>
@@ -41,7 +41,7 @@
     <option value="DESC">Descending</option>
 </select>
 
-<label>Time Limit (ms):</label>
+<label>Time Limit [ms] (leave 0 for no time limit):</label>
 <input type="number" id="timeLimit" value="0">
 
 <button onclick="sendSortRequest()">Sort</button>
