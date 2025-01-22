@@ -58,7 +58,7 @@ public class SortingMadness {
      * @param toSort     the int array to be sorted
      * @param iterations the number of iterations to use in the sorting algorithm
      * @param order      the desired order of the result ("asc" for ascending, "desc" for descending)
-     * @param timeLimit  the maximum time allowed (in milliseconds) for the sorting process
+     * @param timeLimit  the maximum time allowed (in nanoseconds) for the sorting process
      * @return a list of Result objects containing the sorted arrays, execution times,
      *         and the names of the algorithms used
      * @throws IllegalArgumentException if an unknown algorithm name is provided
@@ -74,7 +74,7 @@ public class SortingMadness {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
             int[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
-            long timePassed = sorter.sort(arrayCopy, iterations, timeLimit);
+            long timePassed = sorter.sort(arrayCopy, iterations, timeLimit * 1000000);
             if (order.equalsIgnoreCase("desc")) reverseInPlace(arrayCopy);
 
             results.add(new Result(timePassed, arrayCopy, algorithm)); // Add result
@@ -89,7 +89,7 @@ public class SortingMadness {
      * @param toSort     the String array to be sorted
      * @param iterations the number of iterations to use in the sorting algorithm
      * @param order      the desired order of the result ("asc" for ascending, "desc" for descending)
-     * @param timeLimit  the maximum time allowed (in milliseconds) for the sorting process
+     * @param timeLimit  the maximum time allowed (in nanoseconds) for the sorting process
      * @return a list of Result objects containing the sorted arrays, execution times,
      *         and the names of the algorithms used
      * @throws IllegalArgumentException if an unknown algorithm name is provided
@@ -105,7 +105,7 @@ public class SortingMadness {
             SortingAlgorithm sorter = getSortingAlgorithm(algorithm);
 
             String[] arrayCopy = Arrays.copyOf(toSort, toSort.length); // Copy the array to avoid in-place modifications
-            long timePassed = sorter.sort(arrayCopy, iterations, timeLimit);
+            long timePassed = sorter.sort(arrayCopy, iterations, timeLimit * 1000000);
             if (order.equalsIgnoreCase("desc")) reverseInPlace(arrayCopy);
 
             results.add(new Result(timePassed, arrayCopy, algorithm)); // Add result

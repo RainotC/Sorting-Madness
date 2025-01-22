@@ -17,7 +17,7 @@ public class BubbleSort implements SortingAlgorithm {
      * @param arr        the int array to be sorted
      * @param iterations the maximum number of iterations to perform; if set to 0 or negative,
      *                   the algorithm will run until the array is fully sorted
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     public long sort(int[] arr, int iterations, long timeLimit) {
@@ -52,7 +52,7 @@ public class BubbleSort implements SortingAlgorithm {
      * @param arr        the String array to be sorted
      * @param iterations the maximum number of iterations to perform; if set to 0 or negative,
      *                   the algorithm will run until the array is fully sorted
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     public long sort(String[] arr, int iterations, long timeLimit) {
