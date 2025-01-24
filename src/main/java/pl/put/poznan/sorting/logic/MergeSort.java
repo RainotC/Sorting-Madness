@@ -15,7 +15,7 @@ public class MergeSort implements SortingAlgorithm {
      * @param arr        the int array to be sorted
      * @param iterations the maximum number of recursive calls; if set to 0 or negative,
      *                   the algorithm will sort the entire array
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     public long sort(int[] arr, int iterations, long timeLimit) {
@@ -32,7 +32,7 @@ public class MergeSort implements SortingAlgorithm {
      * @param arr        the String array to be sorted
      * @param iterations the maximum number of recursive calls; if set to 0 or negative,
      *                   the algorithm will sort the entire array
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     public long sort(String[] arr, int iterations, long timeLimit) {
@@ -49,7 +49,7 @@ public class MergeSort implements SortingAlgorithm {
      * @param left       the starting index of the subarray
      * @param right      the ending index of the subarray
      * @param iterations the remaining number of recursive calls allowed
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @param startTime  the starting time for time limit check
      */
     private void mergeSort(int[] arr, int left, int right, int iterations, long timeLimit, long startTime) {
@@ -69,7 +69,7 @@ public class MergeSort implements SortingAlgorithm {
      * @param left       the starting index of the subarray
      * @param right      the ending index of the subarray
      * @param iterations the remaining number of recursive calls allowed
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @param startTime  the starting time for time limit check
      */
     private void mergeSort(String[] arr, int left, int right, int iterations, long timeLimit, long startTime) {

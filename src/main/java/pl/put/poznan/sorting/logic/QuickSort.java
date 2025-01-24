@@ -15,7 +15,7 @@ public class QuickSort implements SortingAlgorithm {
      * @param arr        the int array to be sorted
      * @param iterations the maximum number of recursive calls allowed;
      *                   if set to 0 or negative, the algorithm sorts the entire array
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     public long sort(int[] arr, int iterations, long timeLimit) {
@@ -32,7 +32,7 @@ public class QuickSort implements SortingAlgorithm {
      * @param arr        the String array to be sorted
      * @param iterations the maximum number of recursive calls allowed;
      *                   if set to 0 or negative, the algorithm sorts the entire array
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      * @return the time taken in nanoseconds to sort the array, or the time elapsed if the sorting is stopped by time limit
      */
     public long sort(String[] arr, int iterations, long timeLimit) {
@@ -50,7 +50,7 @@ public class QuickSort implements SortingAlgorithm {
      * @param high       the ending index of the subarray
      * @param iterations the remaining number of recursive calls allowed
      * @param startTime  the starting time for time limit check
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      */
     private void quickSort(int[] arr, int low, int high, int iterations, long startTime, long timeLimit) {
         if (low < high && iterations-- != 0) {
@@ -71,7 +71,7 @@ public class QuickSort implements SortingAlgorithm {
      * @param high       the ending index of the subarray
      * @param iterations the remaining number of recursive calls allowed
      * @param startTime  the starting time for time limit check
-     * @param timeLimit  the maximum time allowed in milliseconds for the sorting process; if 0 or negative algorithms sort without time limit
+     * @param timeLimit  the maximum time allowed in nanoseconds for the sorting process; if 0 or negative algorithms sort without time limit
      */
     private void quickSort(String[] arr, int low, int high, int iterations, long startTime, long timeLimit) {
         if (low < high && iterations-- != 0) {
